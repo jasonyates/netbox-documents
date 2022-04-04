@@ -51,8 +51,26 @@ PLUGINS_CONFIG = {
      }
 }
 
-### Apply Database Migrations
 ```
+
+(Optional) Add or replace the built-in Document Type choices via Netbox's [`FIELD_CHOICES`](https://netbox.readthedocs.io/en/feature/configuration/optional-settings/#field_choices) configuration parameter:
+
+```python
+FIELD_CHOICES = {
+    'netbox_documents.DocTypeChoices.site+': (
+        ('mydocument', 'My Custom Site Document Type', 'green'),
+    ),
+    'netbox_documents.DocTypeChoices.device+': (
+        ('mydocument', 'My Custom Device Document Type', 'green'),
+    ),
+    'netbox_documents.DocTypeChoices.circuit+': (
+        ('mydocument', 'My Custom Circuit Document Type', 'green'),
+    )
+}
+```
+
+Available 
+
 ### Apply Database Migrations
 Apply database migrations with Netbox `manage.py`:
 ```

@@ -3,7 +3,7 @@ from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from dcim.models import Site, Device
 from circuits.models import Circuit
 from utilities.forms import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, DeviceDocument, CircuitDocument, DocTypeChoices
+from .models import SiteDocument, DeviceDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices
 
 
 #### Site Document Form & Filter Form
@@ -31,7 +31,7 @@ class SiteDocumentFilterForm(NetBoxModelFilterSetForm):
     )
 
     document_type = forms.MultipleChoiceField(
-        choices=DocTypeChoices,
+        choices=SiteDocTypeChoices,
         required=False
     )
 
@@ -63,7 +63,7 @@ class DeviceDocumentFilterForm(NetBoxModelFilterSetForm):
     )
 
     document_type = forms.MultipleChoiceField(
-        choices=DocTypeChoices,
+        choices=DeviceDocTypeChoices,
         required=False
     )
 
@@ -95,7 +95,7 @@ class CircuitDocumentFilterForm(NetBoxModelFilterSetForm):
     )
 
     document_type = forms.MultipleChoiceField(
-        choices=DocTypeChoices,
+        choices=CircuitDocTypeChoices,
         required=False
     )
 

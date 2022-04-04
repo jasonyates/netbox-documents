@@ -6,18 +6,39 @@ from netbox.models import NetBoxModel
 from utilities.choices import ChoiceSet
 from .utils import file_upload
 
-class DocTypeChoices(ChoiceSet):
+class SiteDocTypeChoices(ChoiceSet):
 
-    CHOICES = (
+    key = 'DocTypeChoices.site'
+
+    CHOICES = [
         ('diagram', 'Network Diagram', 'green'),
         ('floorplan', 'Floor Plan', 'purple'),
-        ('supportcontract', 'Support Contract', 'blue'),
         ('wirelessmodel', 'Wireless Model (Ekahau)', 'yellow'),
         ('quote', 'Quote', 'brown'),
         ('purchaseorder', 'Purchase Order', 'orange'),
-        ('circuitcontract', 'Circuit Contract', 'red'),
-    )
+    ]
 
+class DeviceDocTypeChoices(ChoiceSet):
+
+    key = 'DocTypeChoices.device'
+
+    CHOICES = [
+        ('diagram', 'Network Diagram', 'green'),
+        ('supportcontract', 'Support Contract', 'blue'),
+        ('quote', 'Quote', 'brown'),
+        ('purchaseorder', 'Purchase Order', 'orange'),
+    ]
+
+class CircuitDocTypeChoices(ChoiceSet):
+    
+    key = 'DocTypeChoices.circuit'
+
+    CHOICES = [
+        ('diagram', 'Network Diagram', 'green'),
+        ('quote', 'Quote', 'brown'),
+        ('purchaseorder', 'Purchase Order', 'orange'),
+        ('circuitcontract', 'Circuit Contract', 'red'),
+    ]
 
 class SiteDocument(NetBoxModel):
     name = models.CharField(
@@ -29,7 +50,7 @@ class SiteDocument(NetBoxModel):
     )
     document_type = models.CharField(
         max_length=30,
-        choices=DocTypeChoices
+        choices=SiteDocTypeChoices
     )
 
     site = models.ForeignKey(
@@ -46,7 +67,7 @@ class SiteDocument(NetBoxModel):
         ordering = ('-created', 'name')
 
     def get_document_type_color(self):
-        return DocTypeChoices.colors.get(self.document_type)
+        return SiteDocTypeChoices.colors.get(self.document_type)
 
     @property
     def size(self):
@@ -92,7 +113,7 @@ class DeviceDocument(NetBoxModel):
     )
     document_type = models.CharField(
         max_length=30,
-        choices=DocTypeChoices
+        choices=DeviceDocTypeChoices
     )
 
     device = models.ForeignKey(
@@ -109,7 +130,7 @@ class DeviceDocument(NetBoxModel):
         ordering = ('name',)
 
     def get_document_type_color(self):
-        return DocTypeChoices.colors.get(self.document_type)
+        return DeviceDocTypeChoices.colors.get(self.document_type)
 
     @property
     def size(self):
@@ -155,7 +176,7 @@ class CircuitDocument(NetBoxModel):
     )
     document_type = models.CharField(
         max_length=30,
-        choices=DocTypeChoices
+        choices=CircuitDocTypeChoices
     )
 
     circuit = models.ForeignKey(
@@ -169,7 +190,7 @@ class CircuitDocument(NetBoxModel):
     )
 
     def get_document_type_color(self):
-        return DocTypeChoices.colors.get(self.document_type)
+        return CircuitDocTypeChoices.colors.get(self.document_type)
 
     class Meta:
         ordering = ('name',)
