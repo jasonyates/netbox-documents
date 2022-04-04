@@ -1,0 +1,48 @@
+{% load helpers %}
+
+<div class="card">
+<h5 class="card-header">
+    Documents
+</h5>
+<div class="card-body">
+{% if circuit_documents %}
+    <table class="table table-hover">
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Type</th>
+            <th>Created</th>
+            <th></th>
+        </tr>
+        {% for document in circuit_documents %}
+        <tr>
+            <td>
+                <a href="{{ document.document.url }}" target="_blank">{% firstof document.name document.filename %}</a>
+            </td>
+            <td>{{ document.size|filesizeformat }}</td>
+            <td>{{ document.document_type }}</td>
+            <td>{{ document.created }}</td>
+            <td class="text-end noprint">
+                  <a href="{% url 'plugins:netbox_documents:circuitdocument_edit' pk=document.pk %}?return_url={% url 'circuits:circuit' pk=object.pk %}" class="btn btn-warning btn-sm lh-1" title="Edit Document">
+                    <i class="mdi mdi-pencil" aria-hidden="true"></i>
+                  </a>
+                  <a href="{% url 'plugins:netbox_documents:circuitdocument_delete' pk=document.pk %}?return_url={% url 'circuits:circuit' pk=object.pk %}" class="btn btn-danger btn-sm lh-1" title="Delete Document">
+                    <i class="mdi mdi-trash-can-outline" aria-hidden="true"></i>
+                  </a>
+              </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <div class="text-muted">
+            None
+        </div>
+    {% endif %}
+    </div>
+        <div class="card-footer text-end noprint">
+            <a href="{% url 'plugins:netbox_documents:circuitdocument_add' %}?circuit={{ object.pk }}&return_url={% url 'circuits:circuit' pk=object.pk %}" class="btn btn-primary btn-sm">
+                <i class="mdi mdi-plus-thick" aria-hidden="true"></i>
+                Add Document
+            </a>
+        </div>
+</div>
