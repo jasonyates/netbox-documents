@@ -43,7 +43,8 @@ class CircuitDocTypeChoices(ChoiceSet):
 class SiteDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
-        blank=True
+        blank=True,
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
     )
     document = models.FileField(
         upload_to=file_upload
@@ -105,7 +106,8 @@ class SiteDocument(NetBoxModel):
 class DeviceDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
-        blank=True
+        blank=True,
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
     )
 
     document = models.FileField(
@@ -169,7 +171,8 @@ class DeviceDocument(NetBoxModel):
 class CircuitDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
-        blank=True
+        blank=True,
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
     )
     document = models.FileField(
         upload_to=file_upload
