@@ -11,7 +11,6 @@
             <th>Name</th>
             <th>Size</th>
             <th>Type</th>
-            <th>Created</th>
             <th></th>
         </tr>
         {% for document in circuit_documents %}
@@ -21,8 +20,10 @@
             </td>
             <td>{{ document.size|filesizeformat }}</td>
             <td>{{ document.document_type }}</td>
-            <td>{{ document.created }}</td>
             <td class="text-end noprint">
+                <a href="{% url 'plugins:netbox_documents:circuitdocument' pk=document.pk %}" class="btn btn-primary btn-sm lh-1" title="View Document">
+                    <i class="mdi mdi-book" aria-hidden="true"></i>
+                  </a>
                   <a href="{% url 'plugins:netbox_documents:circuitdocument_edit' pk=document.pk %}?return_url={% url 'circuits:circuit' pk=object.pk %}" class="btn btn-warning btn-sm lh-1" title="Edit Document">
                     <i class="mdi mdi-pencil" aria-hidden="true"></i>
                   </a>
