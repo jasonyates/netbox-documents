@@ -13,7 +13,7 @@
             </tr>
             <tr>
               <th scope="row">Site</th>
-              <td>{{ object.site }}</td>
+              <td><a href="{% url 'dcim:site' pk=object.site.pk %}">{{ object.site }}</a></td>
             </tr>
             <tr>
               <th scope="row">Document Type</th>
@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <th scope="row">Filename</th>
-                <td>{{ object.filename }}</td>
+                <td><a href="{{ object.document.url }}" target="_blank">{{ object.filename }}</a></td>
               </tr>
               <tr>
                 <th scope="row">Size</th>
