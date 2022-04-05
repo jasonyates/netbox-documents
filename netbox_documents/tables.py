@@ -3,14 +3,26 @@ import django_tables2 as tables
 from netbox.tables import NetBoxTable, columns
 from .models import SiteDocument, DeviceDocument, CircuitDocument
 
-DOCUMENT_LINK = """
-<a href="{{record.document.url}}" target="_blank">
+SITE_DOCUMENT_LINK = """
+<a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">
     {% firstof record.name record.filename %}
-</a>
+</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+"""
+
+CIRCUIT_DOCUMENT_LINK = """
+<a href="{% url 'plugins:netbox_documents:circuitdocument' pk=record.pk %}">
+    {% firstof record.name record.filename %}
+</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+"""
+
+DEVICE_DOCUMENT_LINK = """
+<a href="{% url 'plugins:netbox_documents:devicedocument' pk=record.pk %}">
+    {% firstof record.name record.filename %}
+</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
 """
 
 class SiteDocumentTable(NetBoxTable):
-    name = tables.TemplateColumn(template_code=DOCUMENT_LINK)
+    name = tables.TemplateColumn(template_code=SITE_DOCUMENT_LINK)
     document_type = columns.ChoiceFieldColumn()
     site = tables.Column(
         linkify=True
@@ -26,7 +38,7 @@ class SiteDocumentTable(NetBoxTable):
         default_columns = ('name', 'document_type', 'site', 'tags')
 
 class DeviceDocumentTable(NetBoxTable):
-    name = tables.TemplateColumn(template_code=DOCUMENT_LINK)
+    name = tables.TemplateColumn(template_code=DEVICE_DOCUMENT_LINK)
     document_type = columns.ChoiceFieldColumn()
     device = tables.Column(
         linkify=True
@@ -42,7 +54,7 @@ class DeviceDocumentTable(NetBoxTable):
         default_columns = ('name', 'document_type', 'device', 'tags')
 
 class CircuitDocumentTable(NetBoxTable):
-    name = tables.TemplateColumn(template_code=DOCUMENT_LINK)
+    name = tables.TemplateColumn(template_code=CIRCUIT_DOCUMENT_LINK)
     document_type = columns.ChoiceFieldColumn()
     circuit = tables.Column(
         linkify=True
