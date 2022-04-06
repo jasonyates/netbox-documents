@@ -68,8 +68,7 @@ FIELD_CHOICES = {
     )
 }
 ```
-
-Available 
+ 
 
 ### Apply Database Migrations
 Apply database migrations with Netbox `manage.py`:
