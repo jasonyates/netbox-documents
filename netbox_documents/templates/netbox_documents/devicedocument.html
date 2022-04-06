@@ -17,7 +17,7 @@
             </tr>
             <tr>
               <th scope="row">Document Type</th>
-              <td>{{ object.document_type }}</td>
+              <td>{% badge object.get_document_type_display bg_color=object.get_document_type_color %}</td>
             </tr>
             <tr>
                 <th scope="row">Filename</th>
