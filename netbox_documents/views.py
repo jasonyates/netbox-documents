@@ -36,6 +36,23 @@ class DeviceDocumentEditView(generic.ObjectEditView):
 class DeviceDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.DeviceDocument.objects.all()
 
+### DeviceDocument
+class DeviceTypeDocumentView(generic.ObjectView):
+    queryset = models.DeviceTypeDocument.objects.all()
+
+class DeviceTypeDocumentListView(generic.ObjectListView):
+    queryset = models.DeviceTypeDocument.objects.all()
+    table = tables.DeviceTypeDocumentTable
+    filterset = filtersets.DeviceTypeDocumentFilterSet
+    filterset_form = forms.DeviceTypeDocumentFilterForm
+
+class DeviceTypeDocumentEditView(generic.ObjectEditView):
+    queryset = models.DeviceTypeDocument.objects.all()
+    form = forms.DeviceTypeDocumentForm
+
+class DeviceTypeDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.DeviceTypeDocument.objects.all()
+
 ### CircuitDocument
 class CircuitDocumentView(generic.ObjectView):
     queryset = models.CircuitDocument.objects.all()

@@ -1,6 +1,6 @@
 from extras.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import SiteDocument, DeviceDocument, CircuitDocument
+from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
@@ -50,6 +50,32 @@ class DeviceDocumentList(PluginTemplateExtension):
 
             return self.render('netbox_documents/devicedocument_include.html', extra_context={
                 'device_documents': DeviceDocument.objects.filter(device=self.context['object']),
+            })
+
+        else:
+            return ""
+
+
+class DeviceTypeDocumentList(PluginTemplateExtension):
+    model = 'dcim.device-tyües'
+
+    def left_page(self):
+
+        if plugin_settings.get('enable_device_type_documents') and plugin_settings.get('device_documents_location') == 'left':
+
+            return self.render('netbox_documents/devicetypedocument_include.html', extra_context={
+                'device_type_documents': DeviceDocument.objects.filter(devicetype=self.context['object']),
+            })
+
+        else:
+            return ""
+
+    def right_page(self):
+
+        if plugin_settings.get('enable_device_type_documents') and plugin_settings.get('device_type_documents_location') == 'right':
+
+            return self.render('netbox_documents/devicetypedocument_include.html', extra_context={
+                'device_type_documents': DeviceTypeDocument.objects.filter(devicetype=self.context['object']),
             })
 
         else:

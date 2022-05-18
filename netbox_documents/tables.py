@@ -1,7 +1,7 @@
 import django_tables2 as tables
 
 from netbox.tables import NetBoxTable, columns
-from .models import SiteDocument, DeviceDocument, CircuitDocument
+from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument
 
 SITE_DOCUMENT_LINK = """
 <a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">
@@ -17,6 +17,12 @@ CIRCUIT_DOCUMENT_LINK = """
 
 DEVICE_DOCUMENT_LINK = """
 <a href="{% url 'plugins:netbox_documents:devicedocument' pk=record.pk %}">
+    {% firstof record.name record.filename %}
+</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+"""
+
+DEVICE_TYPE_DOCUMENT_LINK = """
+<a href="{% url 'plugins:netbox_documents:devicetypedocument' pk=record.pk %}">
     {% firstof record.name record.filename %}
 </a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
 """
@@ -52,6 +58,22 @@ class DeviceDocumentTable(NetBoxTable):
         model = DeviceDocument
         fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'device', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'device', 'tags')
+
+class DeviceTypeDocumentTable(NetBoxTable):
+    name = tables.TemplateColumn(template_code=DEVICE_TYPE_DOCUMENT_LINK)
+    document_type = columns.ChoiceFieldColumn()
+    devicetype = tables.Column(
+        linkify=True
+    )
+
+    tags = columns.TagColumn(
+        url_name='dcim:sitegroup_list'
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = DeviceTypeDocument
+        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'device_type', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        default_columns = ('name', 'document_type', 'device_type', 'tags')
 
 class CircuitDocumentTable(NetBoxTable):
     name = tables.TemplateColumn(template_code=CIRCUIT_DOCUMENT_LINK)
