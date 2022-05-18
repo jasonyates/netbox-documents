@@ -1,9 +1,9 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Device
+from dcim.models import Site, Device, DeviceType
 from circuits.models import Circuit
 from utilities.forms import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, DeviceDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices
+from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices
 
 
 #### Site Document Form & Filter Form
@@ -58,6 +58,38 @@ class DeviceDocumentFilterForm(NetBoxModelFilterSetForm):
     )
 
     device = forms.ModelMultipleChoiceField(
+        queryset=Device.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=DeviceDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+
+#### Device Type Document Form & Filter Form
+class DeviceTypeDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    device = DynamicModelChoiceField(
+        queryset=DeviceType.objects.all()
+    )
+
+    class Meta:
+        model = DeviceTypeDocument
+        fields = ('name', 'document', 'document_type', 'device_type', 'comments', 'tags')
+
+class DeviceTypeDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = DeviceTypeDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    device_type = forms.ModelMultipleChoiceField(
         queryset=Device.objects.all(),
         required=False
     )
