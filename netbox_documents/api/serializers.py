@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from netbox.api.serializers import NetBoxModelSerializer
-from ..models import SiteDocument, DeviceDocument, CircuitDocument
-from dcim.api.nested_serializers import NestedSiteSerializer, NestedDeviceSerializer
+from ..models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument #Hempel
+from dcim.api.nested_serializers import NestedSiteSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer #Hempel
 from circuits.api.nested_serializers import NestedCircuitSerializer
 
 class SiteDocumentSerializer(NetBoxModelSerializer):
@@ -30,6 +30,22 @@ class DeviceDocumentSerializer(NetBoxModelSerializer):
 
     class Meta:
         model = DeviceDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename', 'device', 'comments', 'tags', 'custom_fields', 'created',
+            'last_updated',
+        )
+
+#Hempel
+class DeviceTypeDocumentSerializer(NetBoxModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:devicetypedocument-detail'
+    )
+
+    deviceType = NestedDeviceTypeSerializer()
+
+    class Meta:
+        model = DeviceTypeDocument
         fields = (
             'id', 'url', 'display', 'name', 'document', 'document_type', 'filename', 'device', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',

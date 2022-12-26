@@ -1,9 +1,9 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Device
+from dcim.models import Site, Device, DeviceType #Hempel
 from circuits.models import Circuit
 from utilities.forms import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, DeviceDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices
+from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices #Hempel
 
 
 #### Site Document Form & Filter Form
@@ -50,7 +50,7 @@ class DeviceDocumentForm(NetBoxModelForm):
         model = DeviceDocument
         fields = ('name', 'document', 'document_type', 'device', 'comments', 'tags')
 
-class DeviceDocumentFilterForm(NetBoxModelFilterSetForm):
+class c(NetBoxModelFilterSetForm):
     model = DeviceDocument
 
     name = forms.CharField(
@@ -64,6 +64,38 @@ class DeviceDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=DeviceDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+#Hempel
+#### Device Type Document Form & Filter Form
+class DeviceTypeDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    devicetype = DynamicModelChoiceField(
+        queryset=DeviceType.objects.all()
+    )
+
+    class Meta:
+        model = DeviceTypeDocument
+        fields = ('name', 'document', 'document_type', 'device_type', 'comments', 'tags')
+
+class DeviceTypeDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = DeviceTypeDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    device = forms.ModelMultipleChoiceField(
+        queryset=DeviceType.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=DeviceTypeDocTypeChoices,
         required=False
     )
 

@@ -55,6 +55,24 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='DeviceTypeDocument',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
+                ('created', models.DateTimeField(auto_now_add=True, null=True)),
+                ('last_updated', models.DateTimeField(auto_now=True, null=True)),
+                ('custom_field_data', models.JSONField(blank=True, default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
+                ('name', models.CharField(blank=True, max_length=100)),
+                ('document', models.FileField(upload_to=netbox_documents.utils.file_upload)),
+                ('document_type', models.CharField(max_length=30)),
+                ('comments', models.TextField(blank=True)),
+                ('device_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='documents', to='dcim.devicetype')),
+                ('tags', taggit.managers.TaggableManager(through='extras.TaggedItem', to='extras.Tag')),
+            ],
+            options={
+                'ordering': ('name',),
+            },
+        ),
+        migrations.CreateModel(
             name='CircuitDocument',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),

@@ -12,6 +12,8 @@ def file_upload(instance, filename):
         path_prepend = instance.site.id
     if hasattr(instance, 'device'):
         path_prepend = instance.device.id
+    if hasattr(instance, 'devicetype'): #Hempel
+        path_prepend = instance.devicetype.id
     if hasattr(instance, 'circuit'):
         path_prepend = instance.circuit.id
 
