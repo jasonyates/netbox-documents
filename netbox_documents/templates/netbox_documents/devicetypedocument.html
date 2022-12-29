@@ -1,0 +1,40 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+{% block content %}
+  <div class="row mb-3">
+    <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">Device Type Document</h5>
+        <div class="card-body">
+          <table class="table table-hover attr-table">
+            <tr>
+              <th scope="row">Name</th>
+              <td>{{ object.name|placeholder }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Device Type</th>
+              <td><a href="{% url 'dcim:devicetype' pk=object.device_type.pk %}">{{ object.device_type   }}</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Document Type</th>
+              <td>{% badge object.get_document_type_display bg_color=object.get_document_type_color %}</td>
+            </tr>
+            <tr>
+                <th scope="row">Filename</th>
+                <td><a href="{{ object.document.url }}" target="_blank">{{ object.filename }}</a></td>
+              </tr>
+              <tr>
+                <th scope="row">Size</th>
+                <td>{{ object.size|filesizeformat }}</td>
+              </tr>
+          </table>
+        </div>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}

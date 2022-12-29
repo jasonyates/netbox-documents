@@ -23,6 +23,16 @@ if plugin_settings.get('enable_navigation_menu'):
             )
         )
 
+    
+    # Add a menu item for Device Documents if enabled
+    if plugin_settings.get('enable_device_type_documents'):
+        menu_items.append(
+            PluginMenuItem(
+                link='plugins:netbox_documents:devicetypedocument_list',
+                link_text='Device Type Documents'
+            )
+        )
+
     # Add a menu item for Circuit Documents if enabled
     if plugin_settings.get('enable_circuit_documents'):
         menu_items.append(
