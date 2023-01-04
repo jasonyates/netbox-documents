@@ -13,9 +13,10 @@ class SiteDocTypeChoices(ChoiceSet):
     CHOICES = [
         ('diagram', 'Network Diagram', 'green'),
         ('floorplan', 'Floor Plan', 'purple'),
-        ('wirelessmodel', 'Wireless Model (Ekahau)', 'yellow'),
-        ('quote', 'Quote', 'brown'),
         ('purchaseorder', 'Purchase Order', 'orange'),
+        ('quote', 'Quote', 'indigo'),
+        ('wirelessmodel', 'Wireless Model (Ekahau)', 'yellow'),
+        ('other', 'Other', 'gray'),
     ]
 
 class DeviceDocTypeChoices(ChoiceSet):
@@ -24,9 +25,25 @@ class DeviceDocTypeChoices(ChoiceSet):
 
     CHOICES = [
         ('diagram', 'Network Diagram', 'green'),
-        ('supportcontract', 'Support Contract', 'blue'),
-        ('quote', 'Quote', 'brown'),
+        ('manual', 'Manual', 'pink'),
         ('purchaseorder', 'Purchase Order', 'orange'),
+        ('quote', 'Quote', 'indigo'),
+        ('supportcontract', 'Support Contract', 'blue'),
+        ('other', 'Other', 'gray'),
+    ]
+
+
+class DeviceTypeDocTypeChoices(ChoiceSet):
+
+    key = 'DocTypeChoices.devicetype'
+
+    CHOICES = [
+        ('diagram', 'Network Diagram', 'green'),
+        ('manual', 'Manual', 'pink'),
+        ('purchaseorder', 'Purchase Order', 'orange'),
+        ('quote', 'Quote', 'indigo'),
+        ('supportcontract', 'Support Contract', 'blue'),
+        ('other', 'Other', 'gray'),
     ]
 
 class CircuitDocTypeChoices(ChoiceSet):
@@ -34,10 +51,11 @@ class CircuitDocTypeChoices(ChoiceSet):
     key = 'DocTypeChoices.circuit'
 
     CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('quote', 'Quote', 'brown'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
         ('circuitcontract', 'Circuit Contract', 'red'),
+        ('diagram', 'Network Diagram', 'green'),
+        ('purchaseorder', 'Purchase Order', 'orange'),
+        ('quote', 'Quote', 'indigo'),
+        ('other', 'Other', 'gray'),
     ]
 
 class SiteDocument(NetBoxModel):
@@ -167,6 +185,73 @@ class DeviceDocument(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:devicedocument', args=[self.pk])
+
+
+class DeviceTypeDocument(NetBoxModel):
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
+    )
+
+    document = models.FileField(
+        upload_to=file_upload
+    )
+    
+    document_type = models.CharField(
+        max_length=30,
+        choices=DeviceTypeDocTypeChoices
+    )
+
+    device_type = models.ForeignKey(
+        to='dcim.DeviceType',
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+
+    comments = models.TextField(
+        blank=True
+    )
+
+    class Meta:
+        ordering = ('name',)
+
+    def get_document_type_color(self):
+        return DeviceTypeDocTypeChoices.colors.get(self.document_type)
+
+    @property
+    def size(self):
+        """
+        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
+        catch other exceptions that we know other storage back-ends to throw.
+        """
+        expected_exceptions = [OSError]
+
+        try:
+            from botocore.exceptions import ClientError
+            expected_exceptions.append(ClientError)
+        except ImportError:
+            pass
+
+        try:
+            return self.document.size
+        except tuple(expected_exceptions):
+            return None
+
+    @property
+    def filename(self):
+        filename = self.document.name.rsplit('/', 1)[-1]
+        return filename.split('_', 1)[1]
+
+    def __str__(self):
+        if self.name:
+            return self.name
+        filename = self.document.name.rsplit('/', 1)[-1]
+        return filename.split('_', 1)[1]
+
+
+    def get_absolute_url(self):
+        return reverse('plugins:netbox_documents:devicetypedocument', args=[self.pk])
 
 class CircuitDocument(NetBoxModel):
     name = models.CharField(
