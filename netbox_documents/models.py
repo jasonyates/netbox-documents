@@ -121,6 +121,18 @@ class SiteDocument(NetBoxModel):
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:sitedocument', args=[self.pk])
 
+    def delete(self, *args, **kwargs):
+
+        _name = self.document.name
+
+        # Delete file from disk
+        super().delete(*args, **kwargs)
+        self.document.delete(save=False)
+
+        # Restore the name of the document as it's re-used in the notifications later
+        self.document.name = _name
+
+
 class DeviceDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
@@ -185,6 +197,17 @@ class DeviceDocument(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:devicedocument', args=[self.pk])
+
+    def delete(self, *args, **kwargs):
+
+        _name = self.document.name
+
+        # Delete file from disk
+        super().delete(*args, **kwargs)
+        self.document.delete(save=False)
+
+        # Restore the name of the document as it's re-used in the notifications later
+        self.document.name = _name
 
 
 class DeviceTypeDocument(NetBoxModel):
@@ -253,6 +276,17 @@ class DeviceTypeDocument(NetBoxModel):
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:devicetypedocument', args=[self.pk])
 
+    def delete(self, *args, **kwargs):
+
+        _name = self.document.name
+
+        # Delete file from disk
+        super().delete(*args, **kwargs)
+        self.document.delete(save=False)
+
+        # Restore the name of the document as it's re-used in the notifications later
+        self.document.name = _name
+
 class CircuitDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
@@ -315,3 +349,14 @@ class CircuitDocument(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:circuitdocument', args=[self.pk])
+
+    def delete(self, *args, **kwargs):
+
+        _name = self.document.name
+
+        # Delete file from disk
+        super().delete(*args, **kwargs)
+        self.document.delete(save=False)
+
+        # Restore the name of the document as it's re-used in the notifications later
+        self.document.name = _name
