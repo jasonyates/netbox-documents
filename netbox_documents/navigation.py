@@ -6,11 +6,11 @@ plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
 if plugin_settings.get('enable_navigation_menu'):
 
-    menu = []
+    menuitem = []
 
     # Add a menu item for Site Documents if enabled
     if plugin_settings.get('enable_site_documents'):
-        menu.append(
+        menuitem.append(
             PluginMenuItem(
                 link='plugins:netbox_documents:sitedocument_list',
                 link_text='Site Documents',
@@ -25,7 +25,7 @@ if plugin_settings.get('enable_navigation_menu'):
 
     # Add a menu item for Device Documents if enabled
     if plugin_settings.get('enable_device_documents'):
-        menu.append(
+        menuitem.append(
             PluginMenuItem(
                 link='plugins:netbox_documents:devicedocument_list',
                 link_text='Device Documents',
@@ -40,7 +40,7 @@ if plugin_settings.get('enable_navigation_menu'):
     
     # Add a menu item for Device Documents if enabled
     if plugin_settings.get('enable_device_type_documents'):
-        menu.append(
+        menuitem.append(
             PluginMenuItem(
                 link='plugins:netbox_documents:devicetypedocument_list',
                 link_text='Device Type Documents',
@@ -55,7 +55,7 @@ if plugin_settings.get('enable_navigation_menu'):
 
     # Add a menu item for Circuit Documents if enabled
     if plugin_settings.get('enable_circuit_documents'):
-        menu.append(
+        menuitem.append(
             PluginMenuItem(
                 link='plugins:netbox_documents:circuitdocument_list',
                 link_text='Circuit Documents',
@@ -68,10 +68,18 @@ if plugin_settings.get('enable_navigation_menu'):
             )
         )
 
-    menu = PluginMenu(
-        label='Documents',
-        groups=(
-            ('Document Storage', menu),
-        ),
-        icon_class='mdi mdi-file-document-multiple'
-    )
+    # If we are using NB 3.4.0+ display the new top level navigation option
+    if settings.VERSION >= '3.4.0':
+
+        menu = PluginMenu(
+            label='Documents',
+            groups=(
+                ('Document Storage', menuitem),
+            ),
+            icon_class='mdi mdi-file-document-multiple'
+        )
+
+    else:
+
+        # Fall back to pre 3.4 navigation option
+        menu_items = menuitem
