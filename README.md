@@ -117,6 +117,14 @@ Restart the Netbox service to apply changes:
 sudo systemctl restart netbox
 ```
 
+### Re-index Netbox search index (Upgrade to 3.4 only)
+
+If you are upgrading from Netbox 3.2 or above to Netbox 3.4, any previously inserted documents may not show up in the new search feature. To resolve this, re-index the plugin:
+
+```
+(venv) $ python manage.py reindex netbox_documents
+```
+
 ### Screenshots
 
 ![Site Document View](docs/img/siteview.png)
