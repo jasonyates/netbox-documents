@@ -1,0 +1,49 @@
+{% extends 'generic/object_edit.html' %}
+{% load static %}
+{% load form_helpers %}
+{% load helpers %}
+
+{% block form %}
+    <div class="field-group my-5">
+      {% render_field form.name %}
+
+      <div class="field-group my-1">
+        <div class="row mb-1">
+          <div class="offset-sm-3">
+            <ul class="nav nav-pills" role="tablist">
+              <li role="presentation" class="nav-item">
+                <button role="tab" type="button" id="file_tab" data-bs-toggle="tab" aria-controls="filetab" data-bs-target="#filetab" class="nav-link {% if form.initial.external_url == '' %}active{% endif %}">
+                  Upload File
+                </button>
+              </li>
+              <li role="presentation" class="nav-item">
+                <button role="tab" type="button" id="url_tab" data-bs-toggle="tab" aria-controls="urltab" data-bs-target="#urltab" class="nav-link {% if form.initial.external_url != '' %}active{% endif %}">
+                  External URL
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="tab-content p-0 border-0">
+          <div class="tab-pane {% if form.initial.external_url == '' %}active{% endif %}" id="filetab" role="tabpanel" aria-labeled-by="file_tab">
+            {% render_field form.document %}
+          </div>
+          <div class="tab-pane {% if form.initial.external_url != '' %}active{% endif %}" id="urltab" role="tabpanel" aria-labeled-by="url_tab">
+            {% render_field form.external_url %}
+          </div>
+        </div>
+
+        {% render_field form.document_type %}
+        {% render_field form.site %}
+
+        <div class="field-group my-5">
+            <div class="row mb-2">
+              <h5 class="text-center">Comments</h5>
+            </div>
+            {% render_field form.comments %}
+        </div>
+
+        {% render_field form.tags %}
+      </div>
+    </div>
+{% endblock %}

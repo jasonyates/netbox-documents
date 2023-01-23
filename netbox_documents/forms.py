@@ -16,7 +16,7 @@ class SiteDocumentForm(NetBoxModelForm):
 
     class Meta:
         model = SiteDocument
-        fields = ('name', 'document', 'document_type', 'site', 'comments', 'tags')
+        fields = ('name', 'document', 'external_url', 'document_type', 'site', 'comments', 'tags')
 
 class SiteDocumentFilterForm(NetBoxModelFilterSetForm):
     model = SiteDocument
@@ -48,7 +48,7 @@ class DeviceDocumentForm(NetBoxModelForm):
 
     class Meta:
         model = DeviceDocument
-        fields = ('name', 'document', 'document_type', 'device', 'comments', 'tags')
+        fields = ('name', 'document', 'external_url', 'document_type', 'device', 'comments', 'tags')
 
 class DeviceDocumentFilterForm(NetBoxModelFilterSetForm):
     model = DeviceDocument
@@ -80,7 +80,7 @@ class DeviceTypeDocumentForm(NetBoxModelForm):
 
     class Meta:
         model = DeviceTypeDocument
-        fields = ('name', 'document', 'document_type', 'device_type', 'comments', 'tags')
+        fields = ('name', 'document', 'external_url', 'document_type', 'device_type', 'comments', 'tags')
 
 class DeviceTypeDocumentFilterForm(NetBoxModelFilterSetForm):
     model = DeviceTypeDocument
@@ -112,7 +112,7 @@ class CircuitDocumentForm(NetBoxModelForm):
 
     class Meta:
         model = CircuitDocument
-        fields = ('name', 'document', 'document_type', 'circuit', 'comments', 'tags')
+        fields = ('name', 'document', 'external_url', 'document_type', 'circuit', 'comments', 'tags')
 
 class CircuitDocumentFilterForm(NetBoxModelFilterSetForm):
     model = CircuitDocument

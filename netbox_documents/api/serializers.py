@@ -17,7 +17,7 @@ class SiteDocumentSerializer(NetBoxModelSerializer):
     class Meta:
         model = SiteDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename', 'site', 'comments', 'tags', 'custom_fields', 'created',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'site', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',
         )
 
@@ -30,7 +30,7 @@ class NestedSiteDocumentSerializer(WritableNestedSerializer):
     class Meta:
         model = SiteDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
         )
 
 
@@ -46,7 +46,7 @@ class DeviceDocumentSerializer(NetBoxModelSerializer):
     class Meta:
         model = DeviceDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename', 'device', 'comments', 'tags', 'custom_fields', 'created',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'device', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',
         )
 
@@ -59,7 +59,7 @@ class NestedDeviceDocumentSerializer(WritableNestedSerializer):
     class Meta:
         model = DeviceDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
         )
 
 
@@ -74,7 +74,7 @@ class DeviceTypeDocumentSerializer(NetBoxModelSerializer):
     class Meta:
         model = DeviceTypeDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename', 'device_type', 'comments', 'tags', 'custom_fields', 'created',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'device_type', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',
         )
 
@@ -90,7 +90,7 @@ class CircuitDocumentSerializer(NetBoxModelSerializer):
     class Meta:
         model = CircuitDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename', 'circuit', 'comments', 'tags', 'custom_fields', 'created',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'circuit', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',
         )
 
@@ -103,5 +103,5 @@ class NestedCircuitDocumentSerializer(WritableNestedSerializer):
     class Meta:
         model = CircuitDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'document_type', 'filename',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
         )

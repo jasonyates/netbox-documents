@@ -19,6 +19,12 @@
               <th scope="row">Document Type</th>
               <td>{% badge object.get_document_type_display bg_color=object.get_document_type_color %}</td>
             </tr>
+            {% if object.external_url %}
+            <tr>
+              <th scope="row">External URL</th>
+              <td><a href="{{ object.external_url }}" target="_blank">{{ object.external_url }}</a></td>
+            </tr>
+            {% else %}
             <tr>
                 <th scope="row">Filename</th>
                 <td><a href="{{ object.document.url }}" target="_blank">{{ object.filename }}</a></td>
@@ -27,6 +33,7 @@
                 <th scope="row">Size</th>
                 <td>{{ object.size|filesizeformat }}</td>
               </tr>
+              {% endif %}
           </table>
         </div>
       </div>
@@ -37,4 +44,4 @@
       {% include 'inc/panels/comments.html' %}
     </div>
   </div>
-{% endblock content %}
+{% endblock content %} 
