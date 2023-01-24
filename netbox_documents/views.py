@@ -16,8 +16,11 @@ class SiteDocumentEditView(generic.ObjectEditView):
     queryset = models.SiteDocument.objects.all()
     form = forms.SiteDocumentForm
 
+    template_name = 'netbox_documents/sitedocument_edit.html'
+
 class SiteDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.SiteDocument.objects.all()
+
 
 ### DeviceDocument
 class DeviceDocumentView(generic.ObjectView):
@@ -32,6 +35,8 @@ class DeviceDocumentListView(generic.ObjectListView):
 class DeviceDocumentEditView(generic.ObjectEditView):
     queryset = models.DeviceDocument.objects.all()
     form = forms.DeviceDocumentForm
+
+    template_name = 'netbox_documents/devicedocument_edit.html'
 
 class DeviceDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.DeviceDocument.objects.all()
@@ -51,6 +56,8 @@ class DeviceTypeDocumentEditView(generic.ObjectEditView):
     queryset = models.DeviceTypeDocument.objects.all()
     form = forms.DeviceTypeDocumentForm
 
+    template_name = 'netbox_documents/devicetypedocument_edit.html'
+
 class DeviceTypeDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.DeviceTypeDocument.objects.all()
 
@@ -67,6 +74,8 @@ class CircuitDocumentListView(generic.ObjectListView):
 class CircuitDocumentEditView(generic.ObjectEditView):
     queryset = models.CircuitDocument.objects.all()
     form = forms.CircuitDocumentForm
+
+    template_name = 'netbox_documents/circuitdocument_edit.html'
 
 class CircuitDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.CircuitDocument.objects.all()

@@ -1,4 +1,4 @@
-from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -62,11 +62,18 @@ class SiteDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
         blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename or url will be used.'
     )
+
     document = models.FileField(
-        upload_to=file_upload
+        upload_to=file_upload,
+        blank=True
     )
+
+    external_url = models.URLField(
+        blank=True
+    )
+
     document_type = models.CharField(
         max_length=30,
         choices=SiteDocTypeChoices
@@ -84,6 +91,8 @@ class SiteDocument(NetBoxModel):
 
     class Meta:
         ordering = ('-created', 'name')
+        verbose_name_plural = "Site Documments"
+        verbose_name = "Site Document"
 
     def get_document_type_color(self):
         return SiteDocTypeChoices.colors.get(self.document_type)
@@ -104,33 +113,59 @@ class SiteDocument(NetBoxModel):
 
         try:
             return self.document.size
-        except tuple(expected_exceptions):
+        except:
             return None
 
     @property
     def filename(self):
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
+        if self.external_url:
+            return self.external_url
+        elif self.document:
+            filename = self.document.name.rsplit('/', 1)[-1]
+            return filename.split('_', 1)[1]
 
     def __str__(self):
         if self.name:
             return self.name
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
+
+        elif self.external_url:
+            return self.external_url
+
+        elif self.document:
+            filename = self.document.name.rsplit('/', 1)[-1]
+            return filename.split('_', 1)[1]
+
+        else:
+            return ""
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:sitedocument', args=[self.pk])
 
+    def clean(self):
+        super().clean()
+
+        # Must have an uploaded document or an external URL. cannot have both
+        if not self.document and self.external_url == '':
+            raise ValidationError("A document must contain an uploaded file or an external URL.")
+        if self.document and self.external_url:
+            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
+
     def delete(self, *args, **kwargs):
 
-        _name = self.document.name
+        # Check if its a document or a URL
+        if self.external_url == '':
 
-        # Delete file from disk
-        super().delete(*args, **kwargs)
-        self.document.delete(save=False)
+            _name = self.document.name
 
-        # Restore the name of the document as it's re-used in the notifications later
-        self.document.name = _name
+            # Delete file from disk
+            super().delete(*args, **kwargs)
+            self.document.delete(save=False)
+
+            # Restore the name of the document as it's re-used in the notifications later
+            self.document.name = _name
+        else:
+            # Straight delete of external URL
+            super().delete(*args, **kwargs)
 
 
 class DeviceDocument(NetBoxModel):
@@ -141,8 +176,14 @@ class DeviceDocument(NetBoxModel):
     )
 
     document = models.FileField(
-        upload_to=file_upload
+        upload_to=file_upload,
+        blank=True
     )
+
+    external_url = models.URLField(
+        blank=True
+    )
+
     document_type = models.CharField(
         max_length=30,
         choices=DeviceDocTypeChoices
@@ -160,6 +201,8 @@ class DeviceDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
+        verbose_name_plural = "Device Documments"
+        verbose_name = "Device Document"
 
     def get_document_type_color(self):
         return DeviceDocTypeChoices.colors.get(self.document_type)
@@ -180,34 +223,55 @@ class DeviceDocument(NetBoxModel):
 
         try:
             return self.document.size
-        except tuple(expected_exceptions):
+        except:
             return None
 
     @property
     def filename(self):
+        if self.external_url:
+            return self.external_url
         filename = self.document.name.rsplit('/', 1)[-1]
         return filename.split('_', 1)[1]
 
     def __str__(self):
         if self.name:
             return self.name
+
+        if self.external_url:
+            return self.external_url
+
         filename = self.document.name.rsplit('/', 1)[-1]
         return filename.split('_', 1)[1]
-
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:devicedocument', args=[self.pk])
 
+    def clean(self):
+        super().clean()
+
+        # Must have an uploaded document or an external URL. cannot have both
+        if not self.document and self.external_url == '':
+            raise ValidationError("A document must contain an uploaded file or an external URL.")
+        if self.document and self.external_url:
+            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
+
     def delete(self, *args, **kwargs):
 
-        _name = self.document.name
+        # Check if its a document or a URL
+        if self.external_url == '':
 
-        # Delete file from disk
-        super().delete(*args, **kwargs)
-        self.document.delete(save=False)
+            _name = self.document.name
 
-        # Restore the name of the document as it's re-used in the notifications later
-        self.document.name = _name
+            # Delete file from disk
+            super().delete(*args, **kwargs)
+            self.document.delete(save=False)
+
+            # Restore the name of the document as it's re-used in the notifications later
+            self.document.name = _name
+        else:
+            # Straight delete of external URL
+            super().delete(*args, **kwargs)
+
 
 
 class DeviceTypeDocument(NetBoxModel):
@@ -218,9 +282,14 @@ class DeviceTypeDocument(NetBoxModel):
     )
 
     document = models.FileField(
-        upload_to=file_upload
+        upload_to=file_upload,
+        blank=True
     )
     
+    external_url = models.URLField(
+        blank=True
+    )
+
     document_type = models.CharField(
         max_length=30,
         choices=DeviceTypeDocTypeChoices
@@ -238,6 +307,8 @@ class DeviceTypeDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
+        verbose_name_plural = "Device Type Documments"
+        verbose_name = "Device Type Document"
 
     def get_document_type_color(self):
         return DeviceTypeDocTypeChoices.colors.get(self.document_type)
@@ -258,34 +329,55 @@ class DeviceTypeDocument(NetBoxModel):
 
         try:
             return self.document.size
-        except tuple(expected_exceptions):
+        except:
             return None
 
     @property
     def filename(self):
+        if self.external_url:
+            return self.external_url
         filename = self.document.name.rsplit('/', 1)[-1]
         return filename.split('_', 1)[1]
 
     def __str__(self):
         if self.name:
             return self.name
+
+        if self.external_url:
+            return self.external_url
+
         filename = self.document.name.rsplit('/', 1)[-1]
         return filename.split('_', 1)[1]
-
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:devicetypedocument', args=[self.pk])
 
+    def clean(self):
+        super().clean()
+
+        # Must have an uploaded document or an external URL. cannot have both
+        if not self.document and self.external_url == '':
+            raise ValidationError("A document must contain an uploaded file or an external URL.")
+        if self.document and self.external_url:
+            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
+
     def delete(self, *args, **kwargs):
 
-        _name = self.document.name
+        # Check if its a document or a URL
+        if self.external_url == '':
 
-        # Delete file from disk
-        super().delete(*args, **kwargs)
-        self.document.delete(save=False)
+            _name = self.document.name
 
-        # Restore the name of the document as it's re-used in the notifications later
-        self.document.name = _name
+            # Delete file from disk
+            super().delete(*args, **kwargs)
+            self.document.delete(save=False)
+
+            # Restore the name of the document as it's re-used in the notifications later
+            self.document.name = _name
+        else:
+            # Straight delete of external URL
+            super().delete(*args, **kwargs)
+
 
 class CircuitDocument(NetBoxModel):
     name = models.CharField(
@@ -293,9 +385,16 @@ class CircuitDocument(NetBoxModel):
         blank=True,
         help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
     )
+
     document = models.FileField(
-        upload_to=file_upload
+        upload_to=file_upload,
+        blank=True
     )
+
+    external_url = models.URLField(
+        blank=True
+    )
+
     document_type = models.CharField(
         max_length=30,
         choices=CircuitDocTypeChoices
@@ -316,6 +415,8 @@ class CircuitDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
+        verbose_name_plural = "Circuit Documments"
+        verbose_name = "Circuit Document"
 
     @property
     def size(self):
@@ -333,30 +434,51 @@ class CircuitDocument(NetBoxModel):
 
         try:
             return self.document.size
-        except tuple(expected_exceptions):
+        except:
             return None
 
     @property
     def filename(self):
+        if self.external_url:
+            return self.external_url
         filename = self.document.name.rsplit('/', 1)[-1]
         return filename.split('_', 1)[1]
 
     def __str__(self):
         if self.name:
             return self.name
+
+        if self.external_url:
+            return self.external_url
+
         filename = self.document.name.rsplit('/', 1)[-1]
         return filename.split('_', 1)[1]
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:circuitdocument', args=[self.pk])
 
+    def clean(self):
+        super().clean()
+
+        # Must have an uploaded document or an external URL. cannot have both
+        if not self.document and self.external_url == '':
+            raise ValidationError("A document must contain an uploaded file or an external URL.")
+        if self.document and self.external_url:
+            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
+
     def delete(self, *args, **kwargs):
 
-        _name = self.document.name
+        # Check if its a document or a URL
+        if self.external_url == '':
 
-        # Delete file from disk
-        super().delete(*args, **kwargs)
-        self.document.delete(save=False)
+            _name = self.document.name
 
-        # Restore the name of the document as it's re-used in the notifications later
-        self.document.name = _name
+            # Delete file from disk
+            super().delete(*args, **kwargs)
+            self.document.delete(save=False)
+
+            # Restore the name of the document as it's re-used in the notifications later
+            self.document.name = _name
+        else:
+            # Straight delete of external URL
+            super().delete(*args, **kwargs)

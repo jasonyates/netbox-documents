@@ -4,27 +4,35 @@ from netbox.tables import NetBoxTable, columns
 from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
 
 SITE_DOCUMENT_LINK = """
-<a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">
-    {% firstof record.name record.filename %}
-</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
 """
 
 CIRCUIT_DOCUMENT_LINK = """
-<a href="{% url 'plugins:netbox_documents:circuitdocument' pk=record.pk %}">
-    {% firstof record.name record.filename %}
-</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:circuitdocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:circuitdocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
 """
 
 DEVICE_DOCUMENT_LINK = """
-<a href="{% url 'plugins:netbox_documents:devicedocument' pk=record.pk %}">
-    {% firstof record.name record.filename %}
-</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:devicedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:devicedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
 """
 
 DEVICE_TYPE_DOCUMENT_LINK = """
-<a href="{% url 'plugins:netbox_documents:devicetypedocument' pk=record.pk %}">
-    {% firstof record.name record.filename %}
-</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:devicetypedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:devicetypedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
 """
 
 class SiteDocumentTable(NetBoxTable):

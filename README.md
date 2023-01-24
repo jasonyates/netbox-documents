@@ -2,13 +2,31 @@
 
 A plugin designed to faciliate the storage of site, circuit, device type and device specific documents within [NetBox](https://github.com/netbox-community/netbox)
 
-**Note: Netbox v3.2+ is required. This plugin will not work on an earlier release of Netbox.**
+## Features
 
-# Installation
+* Store documents against the following NetBox models:
+   - Circuits
+   - Devices
+   - Device Types
+   - Sites
 
-A working installation of Netbox 3.2+ is required - [see official documentation](https://netbox.readthedocs.io/en/stable/plugins/).
+* Upload documents to your NetBox media/ folder or other Django supported storage method e.g. S3
+* Supports a wide array of common file types (bmp, gif, jpeg, jpg, png, pdf, txt, doc, docx, xls, xlsx, xlsm)
+* Store links to external URL's to save duplication of remote documents
 
-### Package Installation from PyPi
+
+## Compatibility
+
+| NetBox Version | Plugin Version |
+|----------------|----------------|
+|     3.2+       |      0.5.0     |
+
+
+## Installation
+
+A working installation of Netbox 3.2+ is required. 3.4+ is recommended.
+
+#### Package Installation from PyPi
 
 Activate your virtual env and install via pip:
 
@@ -23,7 +41,7 @@ To ensure the Netbox Documents plugin is automatically re-installed during futur
 # echo netbox-documents >> local_requirements.txt
 ```
 
-### Enable the Plugin
+#### Enable the Plugin
 
 In the Netbox `configuration.py` configuration file add or update the PLUGINS parameter, adding `netbox_documents`:
 
@@ -101,7 +119,7 @@ FIELD_CHOICES = {
 }
 ```
 
-### Apply Database Migrations
+#### Apply Database Migrations
 
 Apply database migrations with Netbox `manage.py`:
 
@@ -109,7 +127,7 @@ Apply database migrations with Netbox `manage.py`:
 (venv) $ python manage.py migrate
 ```
 
-### Restart Netbox
+#### Restart Netbox
 
 Restart the Netbox service to apply changes:
 
@@ -117,7 +135,7 @@ Restart the Netbox service to apply changes:
 sudo systemctl restart netbox
 ```
 
-### Re-index Netbox search index (Upgrade to 3.4 only)
+#### Re-index Netbox search index (Upgrade to 3.4 only)
 
 If you are upgrading from Netbox 3.2 or above to Netbox 3.4, any previously inserted documents may not show up in the new search feature. To resolve this, re-index the plugin:
 
