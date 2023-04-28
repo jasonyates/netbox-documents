@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0 (2023-04-28)
+
+* Fixes support for Netbox 3.5
+
 ## 0.5.0 (2023-01-24)
 
 * Fix API Filtersets

@@ -7,7 +7,7 @@ with open(path.join(top_level_directory, 'README.md'), encoding='utf-8') as file
 
 setup(
     name='netbox-documents',
-    version='0.5.0',
+    version='0.6.0',
     description='Manage site, circuit and device diagrams and documents in Netbox',
     long_description=long_description,
     long_description_content_type='text/markdown',
