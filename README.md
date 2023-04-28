@@ -19,12 +19,13 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
-|     3.2+       |      0.5.0     |
+|     3.5+       |      0.6.0     |
+| 3.2.x - 3.4.x  |      0.5.0     |
 
 
 ## Installation
 
-A working installation of Netbox 3.2+ is required. 3.4+ is recommended.
+A working installation of Netbox 3.2+ is required. 3.5+ is recommended. **NOTE: Netbox 3.5 introduced breaking changes for plugins, please use the correct plugin version for your netbox install.**
 
 #### Package Installation from PyPi
 

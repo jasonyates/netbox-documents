@@ -2,7 +2,7 @@ from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from dcim.models import Site, Device, DeviceType 
 from circuits.models import Circuit
-from utilities.forms import TagFilterField, CommentField, DynamicModelChoiceField
+from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
 from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices 
 
 
