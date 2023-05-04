@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 (2023-05-04)
+
+* Patch for Netbox 3.2 - 3.3 where PluginMenu does not exist yet
+
 ## 0.5.0 (2023-01-24)
 
 * Fix API Filtersets
