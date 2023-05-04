@@ -1,4 +1,4 @@
-from extras.plugins import PluginMenuItem, PluginMenu, PluginMenuButton
+from extras.plugins import PluginMenuItem, PluginMenuButton
 from utilities.choices import ButtonColorChoices
 from django.conf import settings
 
@@ -70,6 +70,9 @@ if plugin_settings.get('enable_navigation_menu'):
 
     # If we are using NB 3.4.0+ display the new top level navigation option
     if settings.VERSION >= '3.4.0':
+
+        # PluginMenu only exists in 3.4.0
+        from extras.plugins import PluginMenu
 
         menu = PluginMenu(
             label='Documents',
