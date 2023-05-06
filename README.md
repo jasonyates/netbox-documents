@@ -20,12 +20,12 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 | NetBox Version | Plugin Version |
 |----------------|----------------|
 |     3.5+       |      0.6.0     |
-| 3.2.x - 3.4.x  |      0.5.1     |
+| 3.3.x - 3.4.x  |      0.5.1     |
 
 
 ## Installation
 
-A working installation of Netbox 3.2+ is required. 3.5+ is recommended. **NOTE: Netbox 3.5 introduced breaking changes for plugins, please use the correct plugin version for your netbox install.**
+A working installation of Netbox 3.3+ is required. 3.5+ is recommended. **NOTE: Netbox 3.5 introduced breaking changes for plugins, please use the correct plugin version for your netbox install.**
 
 #### Package Installation from PyPi
 
@@ -138,7 +138,7 @@ sudo systemctl restart netbox
 
 #### Re-index Netbox search index (Upgrade to 3.4 only)
 
-If you are upgrading from Netbox 3.2 or above to Netbox 3.4, any previously inserted documents may not show up in the new search feature. To resolve this, re-index the plugin:
+If you are upgrading from Netbox 3.3 or above to Netbox 3.4, any previously inserted documents may not show up in the new search feature. To resolve this, re-index the plugin:
 
 ```
 (venv) $ python manage.py reindex netbox_documents
