@@ -1,0 +1,1 @@
+drf_extra_fields>=3.7.0
