@@ -10,6 +10,8 @@ def file_upload(instance, filename):
 
     if hasattr(instance, 'site'):
         path_prepend = instance.site.id
+    if hasattr(instance, 'location'):
+        path_prepend = instance.location.id
     if hasattr(instance, 'device'):
         path_prepend = instance.device.id
     if hasattr(instance, 'device_type'): 

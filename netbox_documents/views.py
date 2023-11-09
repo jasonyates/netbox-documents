@@ -22,6 +22,26 @@ class SiteDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.SiteDocument.objects.all()
 
 
+### LocationDocument
+class LocationDocumentView(generic.ObjectView):
+    queryset = models.LocationDocument.objects.all()
+
+class LocationDocumentListView(generic.ObjectListView):
+    queryset = models.LocationDocument.objects.all()
+    table = tables.LocationDocumentTable
+    filterset = filtersets.LocationDocumentFilterSet
+    filterset_form = forms.LocationDocumentFilterForm
+
+class LocationDocumentEditView(generic.ObjectEditView):
+    queryset = models.LocationDocument.objects.all()
+    form = forms.LocationDocumentForm
+
+    template_name = 'netbox_documents/locationdocument_edit.html'
+
+class LocationDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.LocationDocument.objects.all()
+
+
 ### DeviceDocument
 class DeviceDocumentView(generic.ObjectView):
     queryset = models.DeviceDocument.objects.all()

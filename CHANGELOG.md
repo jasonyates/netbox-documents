@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 (2023-11-08)
+
+* Add Location Model
+* Pendiente Migrations: se puede crear el archivo o hay que hacer el makemigration?
+* search.py no tenía cambios en el commit #16
+
 ## 0.6.0 (2023-04-28)
 
 * Fixes support for Netbox 3.5

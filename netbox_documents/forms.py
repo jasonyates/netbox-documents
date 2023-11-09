@@ -1,9 +1,9 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Device, DeviceType 
+from dcim.models import Site, Location, Device, DeviceType 
 from circuits.models import Circuit
 from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices 
 
 
 #### Site Document Form & Filter Form
@@ -32,6 +32,38 @@ class SiteDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=SiteDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+
+#### Location Document Form & Filter Form
+class LocationDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    location = DynamicModelChoiceField(
+        queryset=Site.objects.all()
+    )
+
+    class Meta:
+        model = LocationDocument
+        fields = ('name', 'document', 'external_url', 'document_type', 'location', 'comments', 'tags')
+
+class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = LocationDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    location = forms.ModelMultipleChoiceField(
+        queryset=Location.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=LocationDocTypeChoices,
         required=False
     )
 
