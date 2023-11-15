@@ -41,7 +41,7 @@ class LocationDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:locationdocument-detail'
     )
 
-    site = NestedLocationSerializer()
+    location = NestedLocationSerializer()
 
     class Meta:
         model = LocationDocument
