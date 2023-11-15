@@ -43,7 +43,7 @@ class LocationDocumentForm(NetBoxModelForm):
     comments = CommentField()
 
     location = DynamicModelChoiceField(
-        queryset=Site.objects.all()
+        queryset=Location.objects.all()
     )
 
     class Meta:

@@ -38,7 +38,7 @@ class LocationDocumentList(PluginTemplateExtension):
         if plugin_settings.get('enable_location_documents') and plugin_settings.get('location_documents_location') == 'left':
 
             return self.render('netbox_documents/locationdocument_include.html', extra_context={
-                'location_documents': LocationDocument.objects.filter(site=self.context['object']),
+                'location_documents': LocationDocument.objects.filter(location=self.context['object']),
             })
 
         else:
@@ -49,7 +49,7 @@ class LocationDocumentList(PluginTemplateExtension):
         if plugin_settings.get('enable_location_documents') and plugin_settings.get('location_documents_location') == 'right':
 
             return self.render('netbox_documents/locationdocument_include.html', extra_context={
-                'location_documents': LocationDocument.objects.filter(site=self.context['object']),
+                'location_documents': LocationDocument.objects.filter(location=self.context['object']),
             })
 
         else:
