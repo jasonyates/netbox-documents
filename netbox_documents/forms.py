@@ -69,7 +69,7 @@ class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
         required=False
     )
 
-    location = forms.ModelMultipleChoiceField(
+    location = DynamicModelChoiceField(
         queryset=Location.objects.all(),
         query_params={
             'site_id': '$site'
