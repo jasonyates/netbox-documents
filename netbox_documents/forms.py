@@ -73,7 +73,7 @@ class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
         queryset=Location.objects.all(),
         query_params={
             'site_id': '$site'
-        }
+        },
         required=False
     )
 
