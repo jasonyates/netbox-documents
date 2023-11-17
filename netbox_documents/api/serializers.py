@@ -42,7 +42,8 @@ class LocationDocumentSerializer(NetBoxModelSerializer):
     )
 
     location = NestedLocationSerializer()
-
+    site = NestedSiteSerializer()
+    
     class Meta:
         model = LocationDocument
         fields = (

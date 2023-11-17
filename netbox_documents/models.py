@@ -205,17 +205,13 @@ class LocationDocument(NetBoxModel):
     site = models.ForeignKey(
         to='dcim.Site',
         on_delete=models.CASCADE,
-        related_name='+',
-        blank=True,
-        null=True
+        related_name='document'
     )
 
     location = models.ForeignKey(
         to='dcim.Location',
         on_delete=models.CASCADE,
-        related_name='documents',
-        blank=True,
-        null=True
+        related_name='documents'
     )
 
     comments = models.TextField(
@@ -283,9 +279,7 @@ class LocationDocument(NetBoxModel):
         if self.document and self.external_url:
             raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
         if self.location.site != self.site:
-            raise ValidationError(_(
-                "Location ({loc}) must belong to site ({sit})."
-            ).format(loc=self.location, sit=self.site))
+            raise ValidationError("Location must belong to Site.")
 
     def delete(self, *args, **kwargs):
 
