@@ -1,10 +1,12 @@
 # Changelog
 
+## 0.6.2 (2023-11-17)
+
+* Improve Location Model adding "site" field to the model.
+
 ## 0.6.1 (2023-11-08)
 
 * Add Location Model
-* Pendiente Migrations: se puede crear el archivo o hay que hacer el makemigration?
-* search.py no tenía cambios en el commit #16
 
 ## 0.6.0 (2023-04-28)
 
