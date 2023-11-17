@@ -49,7 +49,7 @@ class LocationDocumentForm(NetBoxModelForm):
     location = DynamicModelChoiceField(
         queryset=Location.objects.all(),
         query_params={
-            'site_id': '$site'
+            'site': '$site'
         }
     )
 
@@ -72,7 +72,7 @@ class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
     location = DynamicModelChoiceField(
         queryset=Location.objects.all(),
         query_params={
-            'site_id': '$site'
+            'site': '$site'
         },
         required=False
     )

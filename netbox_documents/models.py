@@ -205,7 +205,9 @@ class LocationDocument(NetBoxModel):
     site = models.ForeignKey(
         to='dcim.Site',
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name='+',
+        blank=True,
+        null=True
     )
 
     location = models.ForeignKey(
