@@ -12,6 +12,10 @@
               <td>{{ object.name|placeholder }}</td>
             </tr>
             <tr>
+              <th scope="row">Site</th>
+              <td><a href="{% url 'dcim:site' pk=object.site.pk %}">{{ object.site }}</a></td>
+            </tr>
+            <tr>
               <th scope="row">Location</th>
               <td><a href="{% url 'dcim:location' pk=object.location.pk %}">{{ object.location }}</a></td>
             </tr>

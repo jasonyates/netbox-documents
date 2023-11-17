@@ -20,7 +20,7 @@ class LocationDocumentFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = LocationDocument
-        fields = ('id', 'name', 'document_type', 'location')
+        fields = ('id', 'name', 'document_type', 'site', 'location')
 
     def search(self, queryset, name, value):
         if not value.strip():

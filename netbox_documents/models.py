@@ -202,6 +202,12 @@ class LocationDocument(NetBoxModel):
         choices=LocationDocTypeChoices
     )
 
+    site = models.ForeignKey(
+        to='dcim.Site',
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+
     location = models.ForeignKey(
         to='dcim.Location',
         on_delete=models.CASCADE,

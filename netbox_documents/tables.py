@@ -62,6 +62,9 @@ class SiteDocumentTable(NetBoxTable):
 class LocationDocumentTable(NetBoxTable):
     name = tables.TemplateColumn(template_code=LOCATION_DOCUMENT_LINK)
     document_type = columns.ChoiceFieldColumn()
+    site = tables.Column(
+        linkify=True
+    )
     location = tables.Column(
         linkify=True
     )
@@ -72,8 +75,8 @@ class LocationDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = LocationDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'location', 'comments', 'actions', 'created', 'last_updated', 'tags')
-        default_columns = ('name', 'document_type', 'location', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'site', 'location', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        default_columns = ('name', 'document_type', 'site', 'location', 'tags')
 
 class DeviceDocumentTable(NetBoxTable):
     name = tables.TemplateColumn(template_code=DEVICE_DOCUMENT_LINK)

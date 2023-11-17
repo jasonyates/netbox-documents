@@ -42,13 +42,20 @@ class SiteDocumentFilterForm(NetBoxModelFilterSetForm):
 class LocationDocumentForm(NetBoxModelForm):
     comments = CommentField()
 
+    site = DynamicModelChoiceField(
+        queryset=Site.objects.all()
+    )
+
     location = DynamicModelChoiceField(
-        queryset=Location.objects.all()
+        queryset=Location.objects.all(),
+        query_params={
+            'site_id': '$site'
+        }
     )
 
     class Meta:
         model = LocationDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'location', 'comments', 'tags')
+        fields = ('name', 'document', 'external_url', 'document_type', 'site', 'location', 'comments', 'tags')
 
 class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
     model = LocationDocument
@@ -57,8 +64,16 @@ class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
         required=False
     )
 
+    site = DynamicModelChoiceField(
+        queryset=Site.objects.all(),
+        required=False
+    )
+
     location = forms.ModelMultipleChoiceField(
         queryset=Location.objects.all(),
+        query_params={
+            'site_id': '$site'
+        }
         required=False
     )
 

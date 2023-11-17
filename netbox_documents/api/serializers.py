@@ -46,7 +46,7 @@ class LocationDocumentSerializer(NetBoxModelSerializer):
     class Meta:
         model = LocationDocument
         fields = (
-            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'location', 'comments', 'tags', 'custom_fields', 'created',
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'site', 'location', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',
         )
 
