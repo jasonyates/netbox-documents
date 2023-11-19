@@ -1,13 +1,21 @@
 import django_tables2 as tables
 
 from netbox.tables import NetBoxTable, columns
-from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
 
 SITE_DOCUMENT_LINK = """
 {% if record.size %}
     <a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
 {% else %}
     <a href="{% url 'plugins:netbox_documents:sitedocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
+"""
+
+LOCATION_DOCUMENT_LINK = """
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:locationdocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:locationdocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
 {% endif %}
 """
 
@@ -50,6 +58,25 @@ class SiteDocumentTable(NetBoxTable):
         model = SiteDocument
         fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'site', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'site', 'tags')
+
+class LocationDocumentTable(NetBoxTable):
+    name = tables.TemplateColumn(template_code=LOCATION_DOCUMENT_LINK)
+    document_type = columns.ChoiceFieldColumn()
+    site = tables.Column(
+        linkify=True
+    )
+    location = tables.Column(
+        linkify=True
+    )
+
+    tags = columns.TagColumn(
+        url_name='plugins:netbox_documents:locationdocument_list'
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = LocationDocument
+        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'site', 'location', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        default_columns = ('name', 'document_type', 'site', 'location', 'tags')
 
 class DeviceDocumentTable(NetBoxTable):
     name = tables.TemplateColumn(template_code=DEVICE_DOCUMENT_LINK)

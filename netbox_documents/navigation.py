@@ -23,6 +23,21 @@ if plugin_settings.get('enable_navigation_menu'):
             )
         )
 
+    # Add a menu item for Location Documents if enabled
+    if plugin_settings.get('enable_location_documents'):
+        menuitem.append(
+            PluginMenuItem(
+                link='plugins:netbox_documents:locationdocument_list',
+                link_text='Location Documents',
+                buttons=[PluginMenuButton(
+                    link='plugins:netbox_documents:locationdocument_add',
+                    title='Add',
+                    icon_class='mdi mdi-plus-thick',
+                    color=ButtonColorChoices.GREEN
+                )]
+            )
+        )
+
     # Add a menu item for Device Documents if enabled
     if plugin_settings.get('enable_device_documents'):
         menuitem.append(

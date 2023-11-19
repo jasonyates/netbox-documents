@@ -1,6 +1,6 @@
 from extras.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
@@ -24,6 +24,32 @@ class SiteDocumentList(PluginTemplateExtension):
 
             return self.render('netbox_documents/sitedocument_include.html', extra_context={
                 'site_documents': SiteDocument.objects.filter(site=self.context['object']),
+            })
+
+        else:
+            return ""
+
+
+class LocationDocumentList(PluginTemplateExtension):
+    model = 'dcim.location'
+
+    def left_page(self):
+
+        if plugin_settings.get('enable_location_documents') and plugin_settings.get('location_documents_location') == 'left':
+
+            return self.render('netbox_documents/locationdocument_include.html', extra_context={
+                'location_documents': LocationDocument.objects.filter(location=self.context['object']),
+            })
+
+        else:
+            return ""
+
+    def right_page(self):
+
+        if plugin_settings.get('enable_location_documents') and plugin_settings.get('location_documents_location') == 'right':
+
+            return self.render('netbox_documents/locationdocument_include.html', extra_context={
+                'location_documents': LocationDocument.objects.filter(location=self.context['object']),
             })
 
         else:
@@ -106,4 +132,4 @@ class CircuitDocumentList(PluginTemplateExtension):
         else:
             return ""
 
-template_extensions = [SiteDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList]
+template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList]

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.2 (2023-11-17)
+
+* Improve Location Model adding "site" field to the model.
+
+## 0.6.1 (2023-11-08)
+
+* Add Location Model
+
 ## 0.6.0 (2023-04-28)
 
 * Fixes support for Netbox 3.5
