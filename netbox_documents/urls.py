@@ -14,6 +14,16 @@ urlpatterns = (
         'model': models.SiteDocument
     }),
 
+    # LocationDocument
+    path('location-document/', views.LocationDocumentListView.as_view(), name='locationdocument_list'),
+    path('location-document/add/', views.LocationDocumentEditView.as_view(), name='locationdocument_add'),
+    path('location-document/<int:pk>/', views.LocationDocumentView.as_view(), name='locationdocument'),
+    path('location-document/<int:pk>/edit/', views.LocationDocumentEditView.as_view(), name='locationdocument_edit'),
+    path('location-document/<int:pk>/delete/', views.LocationDocumentDeleteView.as_view(), name='locationdocument_delete'),
+    path('location-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='locationdocument_changelog', kwargs={
+        'model': models.LocationDocument
+    }),
+
     # DeviceDocument
     path('device-document/', views.DeviceDocumentListView.as_view(), name='devicedocument_list'),
     path('device-document/add/', views.DeviceDocumentEditView.as_view(), name='devicedocument_add'),

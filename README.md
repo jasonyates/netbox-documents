@@ -9,6 +9,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
    - Devices
    - Device Types
    - Sites
+   - Locations
 
 * Upload documents to your NetBox media/ folder or other Django supported storage method e.g. S3
 * Supports a wide array of common file types (bmp, gif, jpeg, jpg, png, pdf, txt, doc, docx, xls, xlsx, xlsm)
@@ -59,6 +60,8 @@ PLUGINS_CONFIG = {
      'netbox_documents': {
          # Enable the management of site specific documents (True/False)
          'enable_site_documents': True,
+         # Enable the management of location specific documents (True/False)
+         'enable_location_documents': True,
          # Enable the management of circuit specific documents (True/False)
          'enable_circuit_documents': True,
          # Enable the management of device specific documents (True/False)
@@ -69,6 +72,8 @@ PLUGINS_CONFIG = {
          'enable_navigation_menu': True,
          # Location to inject the document widget in the site view (left/right)
          'site_documents_location': 'left',
+         # Location to inject the document widget in the location view (left/right)
+         'location_documents_location': 'left',
          # Location to inject the document widget in the device view (left/right
          'device_documents_location': 'left',
          # Location to inject the document type widget in the device type view (left/right
@@ -107,6 +112,9 @@ Here are a few examples from the CSS:
 FIELD_CHOICES = {
     'netbox_documents.DocTypeChoices.site+': (
         ('mydocument', 'My Custom Site Document Type', 'green'),
+    ),
+    'netbox_documents.DocTypeChoices.location+': (
+        ('mydocument', 'My Custom Location Document Type', 'green'),
     ),
     'netbox_documents.DocTypeChoices.device+': (
         ('mydocument', 'My Custom Device Document Type', 'green'),

@@ -1,9 +1,9 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Device, DeviceType 
+from dcim.models import Site, Location, Device, DeviceType 
 from circuits.models import Circuit
 from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices 
 
 
 #### Site Document Form & Filter Form
@@ -32,6 +32,53 @@ class SiteDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=SiteDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+
+#### Location Document Form & Filter Form
+class LocationDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    site = DynamicModelChoiceField(
+        queryset=Site.objects.all()
+    )
+
+    location = DynamicModelChoiceField(
+        queryset=Location.objects.all(),
+        query_params={
+            'site_id': '$site'
+        }
+    )
+
+    class Meta:
+        model = LocationDocument
+        fields = ('name', 'document', 'external_url', 'document_type', 'site', 'location', 'comments', 'tags')
+
+class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = LocationDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    site = DynamicModelChoiceField(
+        queryset=Site.objects.all(),
+        required=False
+    )
+
+    location = DynamicModelChoiceField(
+        queryset=Location.objects.all(),
+        query_params={
+            'site_id': '$site'
+        },
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=LocationDocTypeChoices,
         required=False
     )
 
