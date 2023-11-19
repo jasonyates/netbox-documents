@@ -4,6 +4,7 @@ from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializ
 from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
 from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer 
 from circuits.api.nested_serializers import NestedCircuitSerializer
+from .fields import UploadableBase64FileField
 
 # Site Document Serializer
 class SiteDocumentSerializer(NetBoxModelSerializer):
@@ -13,6 +14,7 @@ class SiteDocumentSerializer(NetBoxModelSerializer):
     )
 
     site = NestedSiteSerializer()
+    document = UploadableBase64FileField(required=False)
 
     class Meta:
         model = SiteDocument
@@ -72,6 +74,7 @@ class DeviceDocumentSerializer(NetBoxModelSerializer):
     )
 
     device = NestedDeviceSerializer()
+    document = UploadableBase64FileField(required=False)
 
     class Meta:
         model = DeviceDocument
@@ -100,6 +103,7 @@ class DeviceTypeDocumentSerializer(NetBoxModelSerializer):
     )
 
     device_type = NestedDeviceTypeSerializer()
+    document = UploadableBase64FileField(required=False)
 
     class Meta:
         model = DeviceTypeDocument
@@ -116,6 +120,7 @@ class CircuitDocumentSerializer(NetBoxModelSerializer):
     )
 
     circuit = NestedCircuitSerializer()
+    document = UploadableBase64FileField(required=False)
 
     class Meta:
         model = CircuitDocument
