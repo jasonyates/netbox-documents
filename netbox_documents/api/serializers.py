@@ -45,6 +45,7 @@ class LocationDocumentSerializer(NetBoxModelSerializer):
 
     location = NestedLocationSerializer()
     site = NestedSiteSerializer()
+    document = UploadableBase64FileField(required=False)
     
     class Meta:
         model = LocationDocument
