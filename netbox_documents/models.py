@@ -84,7 +84,8 @@ class SiteDocument(NetBoxModel):
     )
 
     external_url = models.URLField(
-        blank=True
+        blank=True,
+        max_length=255
     )
 
     document_type = models.CharField(
@@ -104,7 +105,7 @@ class SiteDocument(NetBoxModel):
 
     class Meta:
         ordering = ('-created', 'name')
-        verbose_name_plural = "Site Documments"
+        verbose_name_plural = "Site Documents"
         verbose_name = "Site Document"
 
     def get_document_type_color(self):
@@ -194,7 +195,8 @@ class LocationDocument(NetBoxModel):
     )
 
     external_url = models.URLField(
-        blank=True
+        blank=True,
+        max_length=255
     )
 
     document_type = models.CharField(
@@ -220,7 +222,7 @@ class LocationDocument(NetBoxModel):
 
     class Meta:
         ordering = ('-created', 'name')
-        verbose_name_plural = "Location Documments"
+        verbose_name_plural = "Location Documents"
         verbose_name = "Location Document"
 
     def get_document_type_color(self):
@@ -312,7 +314,8 @@ class DeviceDocument(NetBoxModel):
     )
 
     external_url = models.URLField(
-        blank=True
+        blank=True,
+        max_length=255
     )
 
     document_type = models.CharField(
@@ -332,7 +335,7 @@ class DeviceDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = "Device Documments"
+        verbose_name_plural = "Device Documents"
         verbose_name = "Device Document"
 
     def get_document_type_color(self):
@@ -418,7 +421,8 @@ class DeviceTypeDocument(NetBoxModel):
     )
     
     external_url = models.URLField(
-        blank=True
+        blank=True,
+        max_length=255
     )
 
     document_type = models.CharField(
@@ -438,7 +442,7 @@ class DeviceTypeDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = "Device Type Documments"
+        verbose_name_plural = "Device Type Documents"
         verbose_name = "Device Type Document"
 
     def get_document_type_color(self):
@@ -523,7 +527,8 @@ class CircuitDocument(NetBoxModel):
     )
 
     external_url = models.URLField(
-        blank=True
+        blank=True,
+        max_length=255
     )
 
     document_type = models.CharField(
@@ -546,7 +551,7 @@ class CircuitDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = "Circuit Documments"
+        verbose_name_plural = "Circuit Documents"
         verbose_name = "Circuit Document"
 
     @property

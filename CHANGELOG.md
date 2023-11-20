@@ -1,8 +1,11 @@
 # Changelog
 
-## 0.6.2 (2023-11-17)
+## 0.6.2 (2023-11-20)
 
-* Improve Location Model adding "site" field to the model.
+* Improve Location Model adding "site" field to the model - PR 44
+* Adding base64 document handling to API serializer - PR 40
+* Extended max URL size to 255 chars
+* Added template tags for plugin helpers
 
 ## 0.6.1 (2023-11-08)
 
