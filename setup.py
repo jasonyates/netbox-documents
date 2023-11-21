@@ -5,6 +5,9 @@ top_level_directory = path.abspath(path.dirname(__file__))
 with open(path.join(top_level_directory, 'README.md'), encoding='utf-8') as file:
     long_description = file.read()
 
+with open(path.join(top_level_directory, 'requirements.txt')) as file:
+    required = file.read().splitlines()
+
 setup(
     name='netbox-documents',
     version='0.6.2',
@@ -14,7 +17,7 @@ setup(
     author='Jason Yates',
     author_email='me@jasonyates.co.uk',
     url='https://github.com/jasonyates/netbox-documents',
-    install_requires=[],
+    install_requires=required,
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
