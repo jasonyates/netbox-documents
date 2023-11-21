@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 (2023-11-21)
+
+* Fix requirements include on install
+  
 ## 0.6.2 (2023-11-20)
 
 * Improve Location Model adding "site" field to the model - PR 44
