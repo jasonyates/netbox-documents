@@ -1,4 +1,4 @@
-from extras.plugins import PluginMenuItem, PluginMenu, PluginMenuButton
+from netbox.plugins import PluginMenuItem, PluginMenu, PluginMenuButton
 from utilities.choices import ButtonColorChoices
 from django.conf import settings
 
