@@ -1,5 +1,5 @@
 from netbox.plugins import PluginMenuItem, PluginMenu, PluginMenuButton
-from utilities.choices import ButtonColorChoices
+from netbox.choices import ButtonColorChoices
 from django.conf import settings
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
