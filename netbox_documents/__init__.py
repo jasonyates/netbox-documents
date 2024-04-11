@@ -1,4 +1,4 @@
-from extras.plugins import PluginConfig
+from netbox.plugins import PluginConfig
 
 class NetboxDocuments(PluginConfig):
     name = 'netbox_documents'
