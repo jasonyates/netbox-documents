@@ -1,9 +1,10 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Location, Device, DeviceType 
+from dcim.models import Site, Location, Device, DeviceType
+from virtualization.models import VirtualMachine
 from circuits.models import Circuit
 from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, VMDocument, VMDocTypeChoices
 
 
 #### Site Document Form & Filter Form
@@ -175,6 +176,37 @@ class CircuitDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=CircuitDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+#### VM Document Form & Filter Form
+class VMDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    vm = DynamicModelChoiceField(
+        queryset=VirtualMachine.objects.all()
+    )
+
+    class Meta:
+        model = VMDocument
+        fields = ('name', 'document', 'external_url', 'document_type', 'vm', 'comments', 'tags')
+
+class VMDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = VMDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    vm = forms.ModelMultipleChoiceField(
+        queryset=VirtualMachine.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=VMDocTypeChoices,
         required=False
     )
 
