@@ -667,8 +667,8 @@ class VMDocument(NetBoxModel):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = "VM Documents"
-        verbose_name = "VM Document"
+        verbose_name_plural = "Virtual Machine Documents"
+        verbose_name = "Virtual Machine Document"
 
     def get_document_type_color(self):
         return VMDocTypeChoices.colors.get(self.document_type)

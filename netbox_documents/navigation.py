@@ -99,7 +99,7 @@ if plugin_settings.get('enable_navigation_menu'):
         menuitem.append(
             PluginMenuItem(
                 link='plugins:netbox_documents:vmdocument_list',
-                link_text='VM Documents',
+                link_text='Virtual Machine Documents',
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:vmdocument_add',
                     title='Add',
