@@ -109,6 +109,21 @@ if plugin_settings.get('enable_navigation_menu'):
             )
         )
 
+    # Add a menu item for Circuit Provider Documents if enabled
+    if plugin_settings.get('enable_circuit_provider_documents'):
+        menuitem.append(
+            PluginMenuItem(
+                link='plugins:netbox_documents:circuitproviderdocument_list',
+                link_text='Circuit Provider Documents',
+                buttons=[PluginMenuButton(
+                    link='plugins:netbox_documents:circuitproviderdocument_add',
+                    title='Add',
+                    icon_class='mdi mdi-plus-thick',
+                    color=ButtonColorChoices.GREEN
+                )]
+            )
+        )
+
     else:
 
         # Fall back to pre 3.4 navigation option

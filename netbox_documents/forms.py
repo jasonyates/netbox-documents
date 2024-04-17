@@ -2,9 +2,9 @@ from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from dcim.models import Site, Location, Device, DeviceType
 from virtualization.models import VirtualMachine
-from circuits.models import Circuit
+from circuits.models import Circuit, Provider
 from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, VMDocument, VMDocTypeChoices
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, VMDocument, VMDocTypeChoices, CircuitProviderDocument, CircuitProviderDocTypeChoices 
 
 
 #### Site Document Form & Filter Form
@@ -207,6 +207,37 @@ class VMDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=VMDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+#### Circuit Provider Document Form & Filter Form
+class CircuitProviderDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    provider = DynamicModelChoiceField(
+        queryset=Provider.objects.all()
+    )
+
+    class Meta:
+        model = CircuitProviderDocument
+        fields = ('name', 'document', 'external_url', 'document_type', 'provider', 'comments', 'tags')
+
+class CircuitProviderDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = CircuitProviderDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    provider = forms.ModelMultipleChoiceField(
+        queryset=Provider.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=CircuitProviderDocTypeChoices,
         required=False
     )
 

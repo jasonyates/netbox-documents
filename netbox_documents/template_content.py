@@ -1,6 +1,6 @@
 from extras.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
@@ -157,4 +157,30 @@ class VMDocumentList(PluginTemplateExtension):
         else:
             return ""
 
-template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList, VMDocumentList]
+class CircuitProviderDocumentList(PluginTemplateExtension):
+    model = 'circuits.provider'
+
+    def left_page(self):
+
+        if plugin_settings.get('enable_circuit_provider_documents') and plugin_settings.get('circuit_provider_documents_location') == 'left':
+
+            return self.render('netbox_documents/circuitproviderdocument_include.html', extra_context={
+                'circuit_provider_documents': CircuitProviderDocument.objects.filter(provider=self.context['object']),
+            })
+
+        else:
+            return ""
+
+    def right_page(self):
+
+        if plugin_settings.get('enable_circuit_provider_documents') and plugin_settings.get('circuit_provider_documents_location') == 'right':
+
+            return self.render('netbox_documents/circuitproviderdocument_include.html', extra_context={
+                'circuit_provider_documents': CircuitProviderDocument.objects.filter(provider=self.context['object']),
+            })
+
+        else:
+            return ""
+
+
+template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList, VMDocumentList, CircuitProviderDocumentList]

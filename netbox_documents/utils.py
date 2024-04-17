@@ -20,6 +20,8 @@ def file_upload(instance, filename):
         path_prepend = instance.circuit.id
     if hasattr(instance, 'vm'):
         path_prepend = instance.vm.id
+    if hasattr(instance, 'provider'):
+        path_prepend = instance.provider.id
 
     # Rename the file to the provided name, if any. Attempt to preserve the file extension.
     extension = filename.rsplit('.')[-1].lower()

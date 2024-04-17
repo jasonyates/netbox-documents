@@ -51,6 +51,14 @@ VM_DOCUMENT_LINK = """
 {% endif %}
 """
 
+CIRCUIT_PROVIDER_DOCUMENT_LINK = """
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:circuitproviderdocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:circuitproviderdocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
+"""
+
 class SiteDocumentTable(NetBoxTable):
     name = tables.TemplateColumn(template_code=SITE_DOCUMENT_LINK)
     document_type = columns.ChoiceFieldColumn()
@@ -150,3 +158,19 @@ class VMDocumentTable(NetBoxTable):
         model = VMDocument
         fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'vm', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'vm', 'tags')
+
+class CircuitProviderDocumentTable(NetBoxTable):
+    name = tables.TemplateColumn(template_code=CIRCUIT_DOCUMENT_LINK)
+    document_type = columns.ChoiceFieldColumn()
+    provider = tables.Column(
+        linkify=True
+    )
+
+    tags = columns.TagColumn(
+        url_name='dcim:sitegroup_list'
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = CircuitDocument
+        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'provider', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        default_columns = ('name', 'document_type', 'provider', 'tags')
