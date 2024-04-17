@@ -99,3 +99,23 @@ class CircuitDocumentEditView(generic.ObjectEditView):
 
 class CircuitDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.CircuitDocument.objects.all()
+
+
+### VMDocument
+class VMDocumentView(generic.ObjectView):
+    queryset = models.VMDocument.objects.all()
+
+class VMDocumentListView(generic.ObjectListView):
+    queryset = models.VMDocument.objects.all()
+    table = tables.VMDocumentTable
+    filterset = filtersets.VMDocumentFilterSet
+    filterset_form = forms.VMDocumentFilterForm
+
+class VMDocumentEditView(generic.ObjectEditView):
+    queryset = models.VMDocument.objects.all()
+    form = forms.VMDocumentForm
+
+    template_name = 'netbox_documents/vmdocument_edit.html'
+
+class VMDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.VMDocument.objects.all()

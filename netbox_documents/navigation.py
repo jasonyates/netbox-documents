@@ -94,6 +94,21 @@ if plugin_settings.get('enable_navigation_menu'):
             icon_class='mdi mdi-file-document-multiple'
         )
 
+    # Add a menu item for VM Documents if enabled
+    if plugin_settings.get('enable_vm_documents'):
+        menuitem.append(
+            PluginMenuItem(
+                link='plugins:netbox_documents:vmdocument_list',
+                link_text='VM Documents',
+                buttons=[PluginMenuButton(
+                    link='plugins:netbox_documents:vmdocument_add',
+                    title='Add',
+                    icon_class='mdi mdi-plus-thick',
+                    color=ButtonColorChoices.GREEN
+                )]
+            )
+        )
+
     else:
 
         # Fall back to pre 3.4 navigation option
