@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.4 (2024-04-17)
+
+* Add documents for Virtual Machines - PR 54 (Thanks @felbinger)
+* Add documents for Circuit Providers
+
 ## 0.6.3 (2023-11-21)
 
 * Fix requirements include on install
