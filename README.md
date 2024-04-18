@@ -12,6 +12,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
    - Locations
    - Virtual Machines
    - Circuit Providers
+   - Power Panels
 
 * Upload documents to your NetBox media/ folder or other Django supported storage method e.g. S3
 * Supports a wide array of common file types (bmp, gif, jpeg, jpg, png, pdf, txt, doc, docx, xls, xlsx, xlsm)
