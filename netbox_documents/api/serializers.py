@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializer
-from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
-from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer 
+from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument, PowerPanelDocument
+from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer
 from circuits.api.nested_serializers import NestedCircuitSerializer, NestedProviderSerializer
 from virtualization.api.nested_serializers import NestedVirtualMachineSerializer
 from .fields import UploadableBase64FileField
@@ -197,6 +197,35 @@ class NestedCircuitProviderDocumentSerializer(WritableNestedSerializer):
 
     class Meta:
         model = CircuitProviderDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
+        )
+
+# Power Panel Document Serializer
+class PowerPanelDocumentSerializer(NetBoxModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:powerpaneldocument-detail'
+    )
+
+    provider = NestedProviderSerializer()
+    document = UploadableBase64FileField(required=False)
+
+    class Meta:
+        model = PowerPanelDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'powerpanel', 'comments', 'tags', 'custom_fields', 'created',
+            'last_updated',
+        )
+
+class NestedPowerPanelDocumentSerializer(WritableNestedSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:powerpanel-detail'
+    )
+
+    class Meta:
+        model = PowerPanelDocument
         fields = (
             'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
         )

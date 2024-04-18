@@ -98,6 +98,15 @@ class VMDocTypeChoices(ChoiceSet):
         ('other', 'Other', 'gray'),
     ]
 
+class PowerPanelDocTypeChoices(ChoiceSet):
+    
+    key = 'DocTypeChoices.circuit'
+
+    CHOICES = [
+        ('schematic', 'Electrical Schematic', 'red'),
+        ('other', 'Other', 'gray'),
+    ]
+
 class SiteDocument(NetBoxModel):
     name = models.CharField(
         max_length=100,
@@ -830,6 +839,112 @@ class CircuitProviderDocument(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_documents:circuitproviderdocument', args=[self.pk])
+
+    def clean(self):
+        super().clean()
+
+        # Must have an uploaded document or an external URL. cannot have both
+        if not self.document and self.external_url == '':
+            raise ValidationError("A document must contain an uploaded file or an external URL.")
+        if self.document and self.external_url:
+            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
+
+    def delete(self, *args, **kwargs):
+
+        # Check if its a document or a URL
+        if self.external_url == '':
+
+            _name = self.document.name
+
+            # Delete file from disk
+            super().delete(*args, **kwargs)
+            self.document.delete(save=False)
+
+            # Restore the name of the document as it's re-used in the notifications later
+            self.document.name = _name
+        else:
+            # Straight delete of external URL
+            super().delete(*args, **kwargs)
+
+
+class PowerPanelDocument(NetBoxModel):
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
+    )
+
+    document = models.FileField(
+        upload_to=file_upload,
+        blank=True
+    )
+
+    external_url = models.URLField(
+        blank=True,
+        max_length=255
+    )
+
+    document_type = models.CharField(
+        max_length=30,
+        choices=PowerPanelDocTypeChoices
+    )
+
+    powerpanel = models.ForeignKey(
+        to='dcim.PowerPanel',
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+
+    comments = models.TextField(
+        blank=True
+    )
+
+    def get_document_type_color(self):
+        return PowerPanelDocTypeChoices.colors.get(self.document_type)
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name_plural = "Power Panel Documents"
+        verbose_name = "Power Panel Document"
+
+    @property
+    def size(self):
+        """
+        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
+        catch other exceptions that we know other storage back-ends to throw.
+        """
+        expected_exceptions = [OSError]
+
+        try:
+            from botocore.exceptions import ClientError
+            expected_exceptions.append(ClientError)
+        except ImportError:
+            pass
+
+        try:
+            return self.document.size
+        except:
+            return None
+
+    @property
+    def filename(self):
+        if self.external_url:
+            return self.external_url
+        filename = self.document.name.rsplit('/', 1)[-1]
+        return filename.split('_', 1)[1]
+
+    def __str__(self):
+        if self.name:
+            return self.name
+
+        if self.external_url:
+            return self.external_url
+
+        filename = self.document.name.rsplit('/', 1)[-1]
+        return filename.split('_', 1)[1]
+
+    def get_absolute_url(self):
+        return reverse('plugins:netbox_documents:powerpaneldocument', args=[self.pk])
 
     def clean(self):
         super().clean()

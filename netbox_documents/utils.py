@@ -22,6 +22,8 @@ def file_upload(instance, filename):
         path_prepend = instance.vm.id
     if hasattr(instance, 'provider'):
         path_prepend = instance.provider.id
+    if hasattr(instance, 'powerpanel'):
+        path_prepend = instance.powerpanel.id
 
     # Rename the file to the provided name, if any. Attempt to preserve the file extension.
     extension = filename.rsplit('.')[-1].lower()

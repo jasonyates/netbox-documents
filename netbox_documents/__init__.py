@@ -17,6 +17,7 @@ class NetboxDocuments(PluginConfig):
         "enable_device_type_documents": True, 
         "enable_vm_documents": True,
         "enable_circuit_provider_documents": True,
+        "enable_power_panel_documents": True,
         "enable_navigation_menu": True,
         "site_documents_location": "left",
         "location_documents_location": "left",
@@ -25,6 +26,7 @@ class NetboxDocuments(PluginConfig):
         "device_type_documents_location": "left", 
         "vm_documents_location": "left",
         "circuit_provider_documents_location": "left",
+        "power_panel_documents_location": "left",
     }
 
 config = NetboxDocuments

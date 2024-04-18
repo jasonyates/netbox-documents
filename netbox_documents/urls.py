@@ -63,7 +63,7 @@ urlpatterns = (
     path('vm-document/<int:pk>/delete/', views.VMDocumentDeleteView.as_view(), name='vmdocument_delete'),
     path('vm-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='vmdocument_changelog', kwargs={
         'model': models.VMDocument
-    }), 
+    }),
 
     # CircuitProviderDocument
     path('circuitprovider-document/', views.CircuitProviderDocumentListView.as_view(), name='circuitproviderdocument_list'),
@@ -73,7 +73,16 @@ urlpatterns = (
     path('circuitprovider-document/<int:pk>/delete/', views.CircuitProviderDocumentDeleteView.as_view(), name='circuitproviderdocument_delete'),
     path('circuitprovider-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='circuitproviderdocument_changelog', kwargs={
         'model': models.CircuitProviderDocument
-    }),    
-    
+    }),
+
+    # PowerPanelDocument
+    path('powerpanel-document/', views.PowerPanelDocumentListView.as_view(), name='powerpaneldocument_list'),
+    path('powerpanel-document/add/', views.PowerPanelDocumentEditView.as_view(), name='powerpaneldocument_add'),
+    path('powerpanel-document/<int:pk>/', views.PowerPanelDocumentView.as_view(), name='powerpaneldocument'),
+    path('powerpanel-document/<int:pk>/edit/', views.PowerPanelDocumentEditView.as_view(), name='powerpaneldocument_edit'),
+    path('powerpanel-document/<int:pk>/delete/', views.PowerPanelDocumentDeleteView.as_view(), name='powerpaneldocument_delete'),
+    path('powerpanel-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='powerpaneldocument_changelog', kwargs={
+        'model': models.PowerPanelDocument
+    }),
 
 )

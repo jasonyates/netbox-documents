@@ -1,6 +1,6 @@
 from extras.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument, PowerPanelDocument
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
@@ -182,5 +182,29 @@ class CircuitProviderDocumentList(PluginTemplateExtension):
         else:
             return ""
 
+class PowerPanelDocumentList(PluginTemplateExtension):
+    model = 'dcim.powerpanel'
 
-template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList, VMDocumentList, CircuitProviderDocumentList]
+    def left_page(self):
+
+        if plugin_settings.get('enable_power_panel_documents') and plugin_settings.get('power_panel_documents_location') == 'left':
+
+            return self.render('netbox_documents/powerpaneldocument_include.html', extra_context={
+                'power_panel_documents': PowerPanelDocument.objects.filter(powerpanel=self.context['object']),
+            })
+
+        else:
+            return ""
+
+    def right_page(self):
+
+        if plugin_settings.get('enable_power_panel_documents') and plugin_settings.get('power_panel_documents_location') == 'right':
+
+            return self.render('netbox_documents/powerpaneldocument_include.html', extra_context={
+                'power_panel_documents': PowerPanelDocument.objects.filter(powerpanel=self.context['object']),
+            })
+
+        else:
+            return ""
+
+template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList, VMDocumentList, CircuitProviderDocumentList, PowerPanelDocumentList]
