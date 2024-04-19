@@ -138,3 +138,22 @@ class CircuitProviderDocumentEditView(generic.ObjectEditView):
 
 class CircuitProviderDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.CircuitProviderDocument.objects.all()
+
+### PowerPanelDocument
+class PowerPanelDocumentView(generic.ObjectView):
+    queryset = models.PowerPanelDocument.objects.all()
+
+class PowerPanelDocumentListView(generic.ObjectListView):
+    queryset = models.PowerPanelDocument.objects.all()
+    table = tables.PowerPanelDocumentTable
+    filterset = filtersets.PowerPanelDocumentFilterSet
+    filterset_form = forms.PowerPanelDocumentFilterForm
+
+class PowerPanelDocumentEditView(generic.ObjectEditView):
+    queryset = models.PowerPanelDocument.objects.all()
+    form = forms.PowerPanelDocumentForm
+
+    template_name = 'netbox_documents/powerpaneldocument_edit.html'
+
+class PowerPanelDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.PowerPanelDocument.objects.all()

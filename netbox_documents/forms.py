@@ -1,10 +1,10 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Location, Device, DeviceType
+from dcim.models import Site, Location, Device, DeviceType, PowerPanel
 from virtualization.models import VirtualMachine
 from circuits.models import Circuit, Provider
 from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, VMDocument, VMDocTypeChoices, CircuitProviderDocument, CircuitProviderDocTypeChoices 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, VMDocument, VMDocTypeChoices, CircuitProviderDocument, CircuitProviderDocTypeChoices, PowerPanelDocument, PowerPanelDocTypeChoices
 
 
 #### Site Document Form & Filter Form
@@ -238,6 +238,37 @@ class CircuitProviderDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=CircuitProviderDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+#### Power Panel Document Form & Filter Form
+class PowerPanelDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    powerpanel = DynamicModelChoiceField(
+        queryset=PowerPanel.objects.all()
+    )
+
+    class Meta:
+        model = PowerPanelDocument
+        fields = ('name', 'document', 'external_url', 'document_type', 'powerpanel', 'comments', 'tags')
+
+class PowerPanelDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = PowerPanelDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    powerpanel = forms.ModelMultipleChoiceField(
+        queryset=PowerPanel.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=PowerPanelDocTypeChoices,
         required=False
     )
 
