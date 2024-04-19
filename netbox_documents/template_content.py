@@ -190,7 +190,7 @@ class PowerPanelDocumentList(PluginTemplateExtension):
         if plugin_settings.get('enable_power_panel_documents') and plugin_settings.get('power_panel_documents_location') == 'left':
 
             return self.render('netbox_documents/powerpaneldocument_include.html', extra_context={
-                'power_panel_documents': PowerPanelDocument.objects.filter(powerpanel=self.context['object']),
+                'powerpanel_documents': PowerPanelDocument.objects.filter(powerpanel=self.context['object']),
             })
 
         else:
@@ -201,7 +201,7 @@ class PowerPanelDocumentList(PluginTemplateExtension):
         if plugin_settings.get('enable_power_panel_documents') and plugin_settings.get('power_panel_documents_location') == 'right':
 
             return self.render('netbox_documents/powerpaneldocument_include.html', extra_context={
-                'power_panel_documents': PowerPanelDocument.objects.filter(powerpanel=self.context['object']),
+                'powerpanel_documents': PowerPanelDocument.objects.filter(powerpanel=self.context['object']),
             })
 
         else:

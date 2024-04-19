@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializer
 from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument, PowerPanelDocument
-from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer
+from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer, NestedPowerPanelSerializer
 from circuits.api.nested_serializers import NestedCircuitSerializer, NestedProviderSerializer
 from virtualization.api.nested_serializers import NestedVirtualMachineSerializer
 from .fields import UploadableBase64FileField
@@ -208,7 +208,7 @@ class PowerPanelDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:powerpaneldocument-detail'
     )
 
-    provider = NestedProviderSerializer()
+    powerpanel = NestedPowerPanelSerializer()
     document = UploadableBase64FileField(required=False)
 
     class Meta:

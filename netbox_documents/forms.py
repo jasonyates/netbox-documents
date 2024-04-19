@@ -247,8 +247,8 @@ class CircuitProviderDocumentFilterForm(NetBoxModelFilterSetForm):
 class PowerPanelDocumentForm(NetBoxModelForm):
     comments = CommentField()
 
-    provider = DynamicModelChoiceField(
-        queryset=Provider.objects.all()
+    powerpanel = DynamicModelChoiceField(
+        queryset=PowerPanel.objects.all()
     )
 
     class Meta:
