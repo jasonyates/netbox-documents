@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
 from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializer
-from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument 
+from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
 from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer 
-from circuits.api.nested_serializers import NestedCircuitSerializer
+from circuits.api.nested_serializers import NestedCircuitSerializer, NestedProviderSerializer
+from virtualization.api.nested_serializers import NestedVirtualMachineSerializer
 from .fields import UploadableBase64FileField
 
 # Site Document Serializer
@@ -138,6 +139,64 @@ class NestedCircuitDocumentSerializer(WritableNestedSerializer):
 
     class Meta:
         model = CircuitDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
+        )
+
+# VM Document Serializer
+class VMDocumentSerializer(NetBoxModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:vmdocument-detail'
+    )
+
+    vm = NestedVirtualMachineSerializer()
+    document = UploadableBase64FileField(required=False)
+
+    class Meta:
+        model = VMDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'vm', 'comments', 'tags', 'custom_fields', 'created',
+            'last_updated',
+        )
+
+class NestedVMDocumentSerializer(WritableNestedSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:vmdocument-detail'
+    )
+
+    class Meta:
+        model = VMDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
+        )
+
+# Circuit Provider Document Serializer
+class CircuitProviderDocumentSerializer(NetBoxModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:circuitproviderdocument-detail'
+    )
+
+    provider = NestedProviderSerializer()
+    document = UploadableBase64FileField(required=False)
+
+    class Meta:
+        model = CircuitProviderDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'provider', 'comments', 'tags', 'custom_fields', 'created',
+            'last_updated',
+        )
+
+class NestedCircuitProviderDocumentSerializer(WritableNestedSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:circuitdocument-detail'
+    )
+
+    class Meta:
+        model = CircuitProviderDocument
         fields = (
             'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
         )

@@ -10,6 +10,8 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
    - Device Types
    - Sites
    - Locations
+   - Virtual Machines
+   - Circuit Providers
 
 * Upload documents to your NetBox media/ folder or other Django supported storage method e.g. S3
 * Supports a wide array of common file types (bmp, gif, jpeg, jpg, png, pdf, txt, doc, docx, xls, xlsx, xlsm)
@@ -20,7 +22,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
-|     3.6+       |      0.6.3     |
+|     3.6+       |      0.6.4     |
 |     3.5.x      |      0.6.0     |
 | 3.3.x - 3.4.x  |      0.5.1     |
 

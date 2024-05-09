@@ -9,5 +9,7 @@ router.register('location-documents', views.LocationDocumentViewSet)
 router.register('device-documents', views.DeviceDocumentViewSet)
 router.register('device-type-documents', views.DeviceTypeDocumentViewSet)
 router.register('circuit-documents', views.CircuitDocumentViewSet)
+router.register('vm-documents', views.VMDocumentViewSet)
+router.register('circuitprovider-documents', views.CircuitProviderDocumentViewSet)
 
 urlpatterns = router.urls

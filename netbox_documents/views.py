@@ -99,3 +99,42 @@ class CircuitDocumentEditView(generic.ObjectEditView):
 
 class CircuitDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.CircuitDocument.objects.all()
+
+
+### VMDocument
+class VMDocumentView(generic.ObjectView):
+    queryset = models.VMDocument.objects.all()
+
+class VMDocumentListView(generic.ObjectListView):
+    queryset = models.VMDocument.objects.all()
+    table = tables.VMDocumentTable
+    filterset = filtersets.VMDocumentFilterSet
+    filterset_form = forms.VMDocumentFilterForm
+
+class VMDocumentEditView(generic.ObjectEditView):
+    queryset = models.VMDocument.objects.all()
+    form = forms.VMDocumentForm
+
+    template_name = 'netbox_documents/vmdocument_edit.html'
+
+class VMDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.VMDocument.objects.all()
+
+### CircuitProviderDocument
+class CircuitProviderDocumentView(generic.ObjectView):
+    queryset = models.CircuitProviderDocument.objects.all()
+
+class CircuitProviderDocumentListView(generic.ObjectListView):
+    queryset = models.CircuitProviderDocument.objects.all()
+    table = tables.CircuitProviderDocumentTable
+    filterset = filtersets.CircuitProviderDocumentFilterSet
+    filterset_form = forms.CircuitProviderDocumentFilterForm
+
+class CircuitProviderDocumentEditView(generic.ObjectEditView):
+    queryset = models.CircuitProviderDocument.objects.all()
+    form = forms.CircuitProviderDocumentForm
+
+    template_name = 'netbox_documents/circuitproviderdocument_edit.html'
+
+class CircuitProviderDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.CircuitProviderDocument.objects.all()

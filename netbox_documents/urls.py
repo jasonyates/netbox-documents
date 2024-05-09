@@ -54,6 +54,26 @@ urlpatterns = (
     path('circuit-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='circuitdocument_changelog', kwargs={
         'model': models.CircuitDocument
     }), 
+
+    # VMDocument
+    path('vm-document/', views.VMDocumentListView.as_view(), name='vmdocument_list'),
+    path('vm-document/add/', views.VMDocumentEditView.as_view(), name='vmdocument_add'),
+    path('vm-document/<int:pk>/', views.VMDocumentView.as_view(), name='vmdocument'),
+    path('vm-document/<int:pk>/edit/', views.VMDocumentEditView.as_view(), name='vmdocument_edit'),
+    path('vm-document/<int:pk>/delete/', views.VMDocumentDeleteView.as_view(), name='vmdocument_delete'),
+    path('vm-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='vmdocument_changelog', kwargs={
+        'model': models.VMDocument
+    }), 
+
+    # CircuitProviderDocument
+    path('circuitprovider-document/', views.CircuitProviderDocumentListView.as_view(), name='circuitproviderdocument_list'),
+    path('circuitprovider-document/add/', views.CircuitProviderDocumentEditView.as_view(), name='circuitproviderdocument_add'),
+    path('circuitprovider-document/<int:pk>/', views.CircuitProviderDocumentView.as_view(), name='circuitproviderdocument'),
+    path('circuitprovider-document/<int:pk>/edit/', views.CircuitProviderDocumentEditView.as_view(), name='circuitproviderdocument_edit'),
+    path('circuitprovider-document/<int:pk>/delete/', views.CircuitProviderDocumentDeleteView.as_view(), name='circuitproviderdocument_delete'),
+    path('circuitprovider-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='circuitproviderdocument_changelog', kwargs={
+        'model': models.CircuitProviderDocument
+    }),    
     
 
 )
