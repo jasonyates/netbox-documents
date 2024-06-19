@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 (2024-06-19)
+
+* Adds support for Netbox 4.0
+
 ## 0.6.4 (2024-04-17)
 
 * Add documents for Virtual Machines - PR 54 (Thanks @felbinger)
