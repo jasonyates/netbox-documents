@@ -22,6 +22,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
+|     4.0+       |      0.7.0     |
 |     3.6+       |      0.6.4     |
 |     3.5.x      |      0.6.0     |
 | 3.3.x - 3.4.x  |      0.5.1     |
@@ -29,7 +30,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 
 ## Installation
 
-A working installation of Netbox 3.3+ is required. 3.6+ is recommended. **NOTE: Netbox 3.5 introduced breaking changes for plugins, please use the correct plugin version for your netbox install.**
+A working installation of Netbox 4.0+ is required. **NOTE: Netbox 3.5 & 4.0 introduced breaking changes for plugins, please use the correct plugin version for your netbox install.**
 
 #### Package Installation from PyPi
 
