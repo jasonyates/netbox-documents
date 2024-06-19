@@ -124,6 +124,21 @@ if plugin_settings.get('enable_navigation_menu'):
             )
         )
 
+    # Add a menu item for Power Panel Documents if enabled
+    if plugin_settings.get('enable_power_panel_documents'):
+        menuitem.append(
+            PluginMenuItem(
+                link='plugins:netbox_documents:powerpaneldocument_list',
+                link_text='Power Panel Documents',
+                buttons=[PluginMenuButton(
+                    link='plugins:netbox_documents:powerpaneldocument_add',
+                    title='Add',
+                    icon_class='mdi mdi-plus-thick',
+                    color=ButtonColorChoices.GREEN
+                )]
+            )
+        )
+
     else:
 
         # Fall back to pre 3.4 navigation option

@@ -1,7 +1,7 @@
 import django_tables2 as tables
 
 from netbox.tables import NetBoxTable, columns
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, PowerPanelDocument
 
 SITE_DOCUMENT_LINK = """
 {% if record.size %}
@@ -59,6 +59,14 @@ CIRCUIT_PROVIDER_DOCUMENT_LINK = """
 {% endif %}
 """
 
+POWER_PANEL_DOCUMENT_LINK = """
+{% if record.size %}
+    <a href="{% url 'plugins:netbox_documents:powerpaneldocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
+{% else %}
+    <a href="{% url 'plugins:netbox_documents:powerpaneldocument' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+{% endif %}
+"""
+
 class SiteDocumentTable(NetBoxTable):
     name = tables.TemplateColumn(template_code=SITE_DOCUMENT_LINK)
     document_type = columns.ChoiceFieldColumn()
@@ -91,7 +99,7 @@ class LocationDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = LocationDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'site', 'location', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'site', 'location', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'site', 'location', 'tags')
 
 class DeviceDocumentTable(NetBoxTable):
@@ -107,7 +115,7 @@ class DeviceDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = DeviceDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'device', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'device', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'device', 'tags')
 
 
@@ -124,7 +132,7 @@ class DeviceTypeDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = DeviceTypeDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'device_type', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'device_type', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'device_type', 'tags')
 
 class CircuitDocumentTable(NetBoxTable):
@@ -140,7 +148,7 @@ class CircuitDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = CircuitDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'circuit', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'circuit', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'circuit', 'tags')
 
 class VMDocumentTable(NetBoxTable):
@@ -156,7 +164,7 @@ class VMDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = VMDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'vm', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'vm', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'vm', 'tags')
 
 class CircuitProviderDocumentTable(NetBoxTable):
@@ -172,5 +180,21 @@ class CircuitProviderDocumentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = CircuitDocument
-        fields = ('pk', 'id', 'name', 'document_type',  'size', 'filename', 'provider', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'provider', 'comments', 'actions', 'created', 'last_updated', 'tags')
         default_columns = ('name', 'document_type', 'provider', 'tags')
+
+class PowerPanelDocumentTable(NetBoxTable):
+    name = tables.TemplateColumn(template_code=POWER_PANEL_DOCUMENT_LINK)
+    document_type = columns.ChoiceFieldColumn()
+    powerpanel = tables.Column(
+        linkify=True
+    )
+
+    tags = columns.TagColumn(
+        url_name='dcim:sitegroup_list'
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = CircuitDocument
+        fields = ('pk', 'id', 'name', 'document_type', 'size', 'filename', 'powerpanel', 'comments', 'actions', 'created', 'last_updated', 'tags')
+        default_columns = ('name', 'document_type', 'powerpanel', 'tags')
