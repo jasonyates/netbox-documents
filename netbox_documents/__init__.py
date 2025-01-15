@@ -4,10 +4,10 @@ class NetboxDocuments(PluginConfig):
     name = 'netbox_documents'
     verbose_name = 'Document Storage'
     description = 'Manage site, location, circuit and device diagrams and documents in Netbox'
-    version = '0.7.0'
+    version = '0.7.1'
     author = 'Jason Yates'
     author_email = 'me@jasonyates.co.uk'
-    min_version = '4.0.0'
+    min_version = '4.2.0'
     base_url = 'documents'
     default_settings = {
         "enable_site_documents": True,

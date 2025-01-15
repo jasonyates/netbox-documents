@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 (2024-06-19)
+
+* Adds support for Netbox 4.2 - PR #71 (Thanks @a084ed22)
+
 ## 0.7.0 (2024-06-19)
 
 * Adds support for Netbox 4.0
