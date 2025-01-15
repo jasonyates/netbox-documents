@@ -2,9 +2,9 @@ from rest_framework import serializers
 
 from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializer
 from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
-from dcim.api.nested_serializers import NestedSiteSerializer, NestedLocationSerializer, NestedDeviceSerializer, NestedDeviceTypeSerializer 
-from circuits.api.nested_serializers import NestedCircuitSerializer, NestedProviderSerializer
-from virtualization.api.nested_serializers import NestedVirtualMachineSerializer
+from dcim.api.serializers import SiteSerializer, LocationSerializer, DeviceSerializer, DeviceTypeSerializer 
+from circuits.api.serializers import CircuitSerializer, ProviderSerializer
+from virtualization.api.serializers import VirtualMachineSerializer
 from .fields import UploadableBase64FileField
 
 # Site Document Serializer
@@ -14,7 +14,7 @@ class SiteDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:sitedocument-detail'
     )
 
-    site = NestedSiteSerializer()
+    site = SiteSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
 
     class Meta:
@@ -44,8 +44,8 @@ class LocationDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:locationdocument-detail'
     )
 
-    location = NestedLocationSerializer()
-    site = NestedSiteSerializer()
+    location = LocationSerializer(nested=True)
+    site = SiteSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
     
     class Meta:
@@ -75,7 +75,7 @@ class DeviceDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:devicedocument-detail'
     )
 
-    device = NestedDeviceSerializer()
+    device = DeviceSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
 
     class Meta:
@@ -104,7 +104,7 @@ class DeviceTypeDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:devicetypedocument-detail'
     )
 
-    device_type = NestedDeviceTypeSerializer()
+    device_type = DeviceTypeSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
 
     class Meta:
@@ -121,7 +121,7 @@ class CircuitDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:circuitdocument-detail'
     )
 
-    circuit = NestedCircuitSerializer()
+    circuit = CircuitSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
 
     class Meta:
@@ -150,7 +150,7 @@ class VMDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:vmdocument-detail'
     )
 
-    vm = NestedVirtualMachineSerializer()
+    vm = VirtualMachineSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
 
     class Meta:
@@ -179,7 +179,7 @@ class CircuitProviderDocumentSerializer(NetBoxModelSerializer):
         view_name='plugins-api:netbox_documents-api:circuitproviderdocument-detail'
     )
 
-    provider = NestedProviderSerializer()
+    provider = ProviderSerializer(nested=True)
     document = UploadableBase64FileField(required=False)
 
     class Meta:
