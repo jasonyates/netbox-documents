@@ -28,7 +28,7 @@ class LocationDocTypeChoices(ChoiceSet):
         ('floorplan', 'Floor Plan', 'purple'),
         ('purchaseorder', 'Purchase Order', 'orange'),
         ('quote', 'Quote', 'indigo'),
-        ('wirelessmodel', 'Wireless Model (Ekahau)', 'yellow'),
+        ('wirelessmodel', 'Wireless Model', 'yellow'),
         ('other', 'Other', 'gray'),
     ]
 
