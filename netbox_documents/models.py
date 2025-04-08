@@ -577,7 +577,7 @@ class ModuleTypeDocument(NetBoxModel):
         choices=ModuleTypeDocTypeChoices
     )
 
-    device_type = models.ForeignKey(
+    module_type = models.ForeignKey(
         to='dcim.ModuleType',
         on_delete=models.CASCADE,
         related_name='documents'

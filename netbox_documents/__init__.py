@@ -24,7 +24,7 @@ class NetboxDocuments(PluginConfig):
         "circuit_documents_location": "left",
         "device_documents_location": "left",
         "device_type_documents_location": "left", 
-        "device_type_module_location": "left",
+        "module_type_documents_location": "left",
         "vm_documents_location": "left",
         "circuit_provider_documents_location": "left",
     }
