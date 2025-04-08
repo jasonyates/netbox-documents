@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.2 (2025-04-8)
+
+* Adds support for Module Type's - PR #73 (Thanks @BartZimmo)
+* Adds additional doc types
+* Rename Wireless doc type to remove reference to Ekahau
+* Add navigation permissions to prevent users not logged in from seeing document navigation (Fixes #66)
+
 ## 0.7.1 (2024-06-19)
 
 * Adds support for Netbox 4.2 - PR #71 (Thanks @a084ed22)
