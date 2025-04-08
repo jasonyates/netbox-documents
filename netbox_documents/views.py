@@ -81,6 +81,27 @@ class DeviceTypeDocumentEditView(generic.ObjectEditView):
 class DeviceTypeDocumentDeleteView(generic.ObjectDeleteView):
     queryset = models.DeviceTypeDocument.objects.all()
 
+
+### ModuleTypeDocument
+class ModuleTypeDocumentView(generic.ObjectView):
+    queryset = models.ModuleTypeDocument.objects.all()
+
+class ModuleTypeDocumentListView(generic.ObjectListView):
+    queryset = models.ModuleTypeDocument.objects.all()
+    table = tables.ModuleTypeDocumentTable
+    filterset = filtersets.ModuleTypeDocumentFilterSet
+    filterset_form = forms.ModuleTypeDocumentFilterForm
+
+class ModuleTypeDocumentEditView(generic.ObjectEditView):
+    queryset = models.ModuleTypeDocument.objects.all()
+    form = forms.ModuleTypeDocumentForm
+
+    template_name = 'netbox_documents/moduletypedocument_edit.html'
+
+class ModuleTypeDocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.ModuleTypeDocument.objects.all()
+
+
 ### CircuitDocument
 class CircuitDocumentView(generic.ObjectView):
     queryset = models.CircuitDocument.objects.all()

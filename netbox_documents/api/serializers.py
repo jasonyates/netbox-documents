@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from netbox.api.serializers import NetBoxModelSerializer, WritableNestedSerializer
-from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
-from dcim.api.serializers import SiteSerializer, LocationSerializer, DeviceSerializer, DeviceTypeSerializer 
+from ..models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, ModuleTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
+from dcim.api.serializers import SiteSerializer, LocationSerializer, DeviceSerializer, DeviceTypeSerializer, ModuleTypeSerializer
 from circuits.api.serializers import CircuitSerializer, ProviderSerializer
 from virtualization.api.serializers import VirtualMachineSerializer
 from .fields import UploadableBase64FileField
@@ -113,6 +113,37 @@ class DeviceTypeDocumentSerializer(NetBoxModelSerializer):
             'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'device_type', 'comments', 'tags', 'custom_fields', 'created',
             'last_updated',
         )
+
+# Module Document Serializer
+
+class ModuleTypeDocumentSerializer(NetBoxModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:moduletypedocument-detail'
+    )
+
+    module_type = ModuleTypeSerializer(nested=True)
+    document = UploadableBase64FileField(required=False)
+
+    class Meta:
+        model = ModuleTypeDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename', 'module_type', 'comments', 'tags', 'custom_fields', 'created',
+            'last_updated',
+        )
+
+class NestedModuleTypeDocumentSerializer(WritableNestedSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_documents-api:moduletypedocument-detail'
+    )
+
+    class Meta:
+        model = DeviceDocument
+        fields = (
+            'id', 'url', 'display', 'name', 'document', 'external_url', 'document_type', 'filename',
+        )
+
 
 # Circuit Document Serializer
 class CircuitDocumentSerializer(NetBoxModelSerializer):

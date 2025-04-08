@@ -1,10 +1,10 @@
 from django import forms
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Location, Device, DeviceType
+from dcim.models import Site, Location, Device, DeviceType, ModuleType
 from virtualization.models import VirtualMachine
 from circuits.models import Circuit, Provider
 from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, VMDocument, VMDocTypeChoices, CircuitProviderDocument, CircuitProviderDocTypeChoices 
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, ModuleTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, ModuleTypeDocTypeChoices, VMDocument, VMDocTypeChoices, CircuitProviderDocument, CircuitProviderDocTypeChoices 
 
 
 #### Site Document Form & Filter Form
@@ -144,6 +144,38 @@ class DeviceTypeDocumentFilterForm(NetBoxModelFilterSetForm):
 
     document_type = forms.MultipleChoiceField(
         choices=DeviceTypeDocTypeChoices,
+        required=False
+    )
+
+    tag = TagFilterField(model)
+
+
+#### Module Type Document Form & Filter Form
+class ModuleTypeDocumentForm(NetBoxModelForm):
+    comments = CommentField()
+
+    module_type = DynamicModelChoiceField(
+        queryset=ModuleType.objects.all()
+    )
+
+    class Meta:
+        model = ModuleTypeDocument
+        fields = ('name', 'document', 'external_url', 'document_type', 'module_type', 'comments', 'tags')
+
+class ModuleTypeDocumentFilterForm(NetBoxModelFilterSetForm):
+    model = ModuleTypeDocument
+
+    name = forms.CharField(
+        required=False
+    )
+
+    device = forms.ModelMultipleChoiceField(
+        queryset=ModuleType.objects.all(),
+        required=False
+    )
+
+    document_type = forms.MultipleChoiceField(
+        choices=ModuleTypeDocTypeChoices,
         required=False
     )
 

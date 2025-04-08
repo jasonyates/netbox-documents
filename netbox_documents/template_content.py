@@ -1,6 +1,6 @@
 from netbox.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
+from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, ModuleTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
@@ -107,6 +107,31 @@ class DeviceTypeDocumentList(PluginTemplateExtension):
         else:
             return ""
 
+class ModuleTypeDocumentList(PluginTemplateExtension):
+    model = 'dcim.moduletype'
+
+    def left_page(self):
+
+        if plugin_settings.get('enable_module_type_documents') and plugin_settings.get('module_type_documents_location') == 'left':
+
+            return self.render('netbox_documents/moduletypedocument_include.html', extra_context={
+                'module_type_documents': ModuleTypeDocument.objects.filter(module_type=self.context['object']),
+            })
+
+        else:
+            return ""
+
+    def right_page(self):
+
+        if plugin_settings.get('enable_module_type_documents') and plugin_settings.get('module_type_documents_location') == 'right':
+
+            return self.render('netbox_documents/moduletypedocument_include.html', extra_context={
+                'module_type_documents': ModuleTypeDocument.objects.filter(module_type=self.context['object']),
+            })
+
+        else:
+            return ""
+
 class CircuitDocumentList(PluginTemplateExtension):
     model = 'circuits.circuit'
 
@@ -183,4 +208,4 @@ class CircuitProviderDocumentList(PluginTemplateExtension):
             return ""
 
 
-template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, CircuitDocumentList, VMDocumentList, CircuitProviderDocumentList]
+template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, ModuleTypeDocumentList, CircuitDocumentList, VMDocumentList, CircuitProviderDocumentList]
