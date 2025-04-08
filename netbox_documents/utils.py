@@ -27,7 +27,7 @@ def file_upload(instance, filename):
 
     # Rename the file to the provided name, if any. Attempt to preserve the file extension.
     extension = filename.rsplit('.')[-1].lower()
-    if instance.name and extension in ['bmp', 'gif', 'jpeg', 'jpg', 'png', 'pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'xlsm', 'tif', 'tiff']:
+    if instance.name and extension in ['bmp', 'gif', 'jpeg', 'jpg', 'png', 'pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'xlsm', 'tif', 'tiff', 'drawio', 'svg', 'webp', 'html', 'pptx']:
         filename = '.'.join([instance.name, extension])
     elif instance.name:
         filename = instance.name
