@@ -14,8 +14,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:sitedocument_list',
                 link_text='Site Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:sitedocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -29,8 +31,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:locationdocument_list',
                 link_text='Location Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:locationdocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -44,8 +48,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:devicedocument_list',
                 link_text='Device Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:devicedocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -59,8 +65,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:devicetypedocument_list',
                 link_text='Device Type Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:devicetypedocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -74,8 +82,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:moduletypedocument_list',
                 link_text='Module Type Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:moduletypedocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -90,8 +100,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:circuitdocument_list',
                 link_text='Circuit Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:circuitdocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -116,8 +128,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:vmdocument_list',
                 link_text='Virtual Machine Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:vmdocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
@@ -131,8 +145,10 @@ if plugin_settings.get('enable_navigation_menu'):
             PluginMenuItem(
                 link='plugins:netbox_documents:circuitproviderdocument_list',
                 link_text='Circuit Provider Documents',
+                permissions=["netbox_documents.view_document"],
                 buttons=[PluginMenuButton(
                     link='plugins:netbox_documents:circuitproviderdocument_add',
+                    permissions=["netbox_documents.add_document"],
                     title='Add',
                     icon_class='mdi mdi-plus-thick',
                     color=ButtonColorChoices.GREEN
