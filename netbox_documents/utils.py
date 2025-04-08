@@ -16,6 +16,8 @@ def file_upload(instance, filename):
         path_prepend = instance.device.id
     if hasattr(instance, 'device_type'): 
         path_prepend = instance.device_type.id
+    if hasattr(instance, 'module_type'): 
+        path_prepend = instance.module_type.id
     if hasattr(instance, 'circuit'):
         path_prepend = instance.circuit.id
     if hasattr(instance, 'vm'):

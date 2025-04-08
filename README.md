@@ -8,6 +8,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
    - Circuits
    - Devices
    - Device Types
+   - Module Types
    - Sites
    - Locations
    - Virtual Machines
@@ -73,6 +74,8 @@ PLUGINS_CONFIG = {
          'enable_device_documents': True,
          # Enable the management of device type specific documents (True/False)
          'enable_device_type_documents': True,
+         # Enable the management of module type specific documents (True/False)
+         'enable_module_type_documents': True,
          # Enable the global menu options (True/False)   
          'enable_navigation_menu': True,
          # Location to inject the document widget in the site view (left/right)
@@ -126,6 +129,9 @@ FIELD_CHOICES = {
     ),
     'netbox_documents.DocTypeChoices.devicetype+': (
         ('mydocument', 'My Custom Device Type Document Type', 'green'),
+    ),
+    'netbox_documents.DocTypeChoices.moduletype+': (
+        ('mydocument', 'My Custom Module Type Document Type', 'green'),
     ),
     'netbox_documents.DocTypeChoices.circuit+': (
         ('mydocument', 'My Custom Circuit Document Type', 'green'),

@@ -45,6 +45,16 @@ urlpatterns = (
         'model': models.DeviceTypeDocument
     }),
 
+    # ModuleTypeDocument
+    path('module-type-document/', views.ModuleTypeDocumentListView.as_view(), name='moduletypedocument_list'),
+    path('module-type-document/add/', views.ModuleTypeDocumentEditView.as_view(), name='moduletypedocument_add'),
+    path('module-type-document/<int:pk>/', views.ModuleTypeDocumentView.as_view(), name='moduletypedocument'),
+    path('module-type-document/<int:pk>/edit/', views.ModuleTypeDocumentEditView.as_view(), name='moduletypedocument_edit'),
+    path('module-type-document/<int:pk>/delete/', views.ModuleTypeDocumentDeleteView.as_view(), name='moduletypedocument_delete'),
+    path('module-type-document/<int:pk>/changelog/', ObjectChangeLogView.as_view(), name='moduletypedocument_changelog', kwargs={
+        'model': models.ModuleTypeDocument
+    }),
+
     # CircuitDocument
     path('circuit-document/', views.CircuitDocumentListView.as_view(), name='circuitdocument_list'),
     path('circuit-document/add/', views.CircuitDocumentEditView.as_view(), name='circuitdocument_add'),

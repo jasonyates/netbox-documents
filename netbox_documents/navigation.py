@@ -53,7 +53,7 @@ if plugin_settings.get('enable_navigation_menu'):
             )
         )
     
-    # Add a menu item for Device Documents if enabled
+    # Add a menu item for Device Type Documents if enabled
     if plugin_settings.get('enable_device_type_documents'):
         menuitem.append(
             PluginMenuItem(
@@ -67,6 +67,22 @@ if plugin_settings.get('enable_navigation_menu'):
                 )]
             )
         )
+
+    # Add a menu item for Module Type Documents if enabled
+    if plugin_settings.get('enable_module_type_documents'):
+        menuitem.append(
+            PluginMenuItem(
+                link='plugins:netbox_documents:moduletypedocument_list',
+                link_text='Module Type Documents',
+                buttons=[PluginMenuButton(
+                    link='plugins:netbox_documents:moduletypedocument_add',
+                    title='Add',
+                    icon_class='mdi mdi-plus-thick',
+                    color=ButtonColorChoices.GREEN
+                )]
+            )
+        )
+
 
     # Add a menu item for Circuit Documents if enabled
     if plugin_settings.get('enable_circuit_documents'):
