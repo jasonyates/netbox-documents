@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3 (2025-05-06)
+
+* Support for NetBox 4.3
+
 ## 0.7.2 (2025-04-8)
 
 * Adds support for Module Type's - PR #73 (Thanks @BartZimmo)
