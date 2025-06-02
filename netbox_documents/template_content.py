@@ -5,7 +5,7 @@ from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDo
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
 class SiteDocumentList(PluginTemplateExtension):
-    model = 'dcim.site'
+    models = ['dcim.site']
 
     def left_page(self):
 
@@ -31,7 +31,7 @@ class SiteDocumentList(PluginTemplateExtension):
 
 
 class LocationDocumentList(PluginTemplateExtension):
-    model = 'dcim.location'
+    models = ['dcim.location']
 
     def left_page(self):
 
@@ -57,7 +57,7 @@ class LocationDocumentList(PluginTemplateExtension):
 
 
 class DeviceDocumentList(PluginTemplateExtension):
-    model = 'dcim.device'
+    models = ['dcim.device']
 
     def left_page(self):
 
@@ -83,7 +83,7 @@ class DeviceDocumentList(PluginTemplateExtension):
 
 
 class DeviceTypeDocumentList(PluginTemplateExtension):
-    model = 'dcim.devicetype'
+    models = ['dcim.devicetype']
 
     def left_page(self):
 
@@ -108,7 +108,7 @@ class DeviceTypeDocumentList(PluginTemplateExtension):
             return ""
 
 class ModuleTypeDocumentList(PluginTemplateExtension):
-    model = 'dcim.moduletype'
+    models = ['dcim.moduletype']
 
     def left_page(self):
 
@@ -133,7 +133,7 @@ class ModuleTypeDocumentList(PluginTemplateExtension):
             return ""
 
 class CircuitDocumentList(PluginTemplateExtension):
-    model = 'circuits.circuit'
+    models = ['circuits.circuit']
 
     def left_page(self):
 
@@ -158,7 +158,7 @@ class CircuitDocumentList(PluginTemplateExtension):
             return ""
 
 class VMDocumentList(PluginTemplateExtension):
-    model = 'virtualization.virtualmachine'
+    models = ['virtualization.virtualmachine']
 
     def left_page(self):
 
@@ -183,7 +183,7 @@ class VMDocumentList(PluginTemplateExtension):
             return ""
 
 class CircuitProviderDocumentList(PluginTemplateExtension):
-    model = 'circuits.provider'
+    models = ['circuits.provider']
 
     def left_page(self):
 

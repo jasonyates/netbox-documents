@@ -23,6 +23,7 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
+|     4.3+       |      0.7.3     |
 |     4.2+       |      0.7.2     |
 |  4.0 - 4.1     |      0.7.0     |
 |     3.6+       |      0.6.4     |
