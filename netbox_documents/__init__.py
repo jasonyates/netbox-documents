@@ -5,7 +5,7 @@ class NetboxDocuments(PluginConfig):
     name = 'netbox_documents'
     verbose_name = 'Document Storage'
     description = 'Attach documents and external URLs to any NetBox object'
-    version = '0.8.0'
+    version = '0.8.1'
     author = 'Jason Yates'
     author_email = 'me@jasonyates.co.uk'
     min_version = '4.3.0'
