@@ -1,276 +1,58 @@
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
-from dcim.models import Site, Location, Device, DeviceType, ModuleType
-from virtualization.models import VirtualMachine
-from circuits.models import Circuit, Provider
-from utilities.forms.fields import TagFilterField, CommentField, DynamicModelChoiceField
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, ModuleTypeDocument, CircuitDocument, CircuitDocTypeChoices, SiteDocTypeChoices, LocationDocTypeChoices, DeviceDocTypeChoices, DeviceTypeDocTypeChoices, ModuleTypeDocTypeChoices, VMDocument, VMDocTypeChoices, CircuitProviderDocument, CircuitProviderDocTypeChoices 
+from utilities.forms.fields import TagFilterField, CommentField, ContentTypeChoiceField
+from .models import Document, DocTypeChoices, get_allowed_doc_types
 
 
-#### Site Document Form & Filter Form
-class SiteDocumentForm(NetBoxModelForm):
+class DocumentForm(NetBoxModelForm):
     comments = CommentField()
 
-    site = DynamicModelChoiceField(
-        queryset=Site.objects.all()
-    )
-
     class Meta:
-        model = SiteDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'site', 'comments', 'tags')
+        model = Document
+        fields = (
+            'name', 'document', 'external_url', 'document_type',
+            'comments', 'tags',
+        )
 
-class SiteDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = SiteDocument
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    name = forms.CharField(
-        required=False
-    )
+        # Determine content_type from existing instance (set by view's alter_object)
+        content_type_id = None
+        if self.instance and self.instance.content_type_id:
+            content_type_id = self.instance.content_type_id
 
-    site = forms.ModelMultipleChoiceField(
-        queryset=Site.objects.all(),
-        required=False
-    )
+        allowed_values = get_allowed_doc_types(content_type_id)
+
+        if allowed_values is not None:
+            all_choices = list(DocTypeChoices.choices)
+            filtered = [c for c in all_choices if c[0] in allowed_values]
+
+            # Preserve the current value when editing an existing document
+            if self.instance and self.instance.pk:
+                current = self.instance.document_type
+                if current and current not in allowed_values:
+                    current_label = dict(all_choices).get(current, current)
+                    filtered.append((current, current_label))
+
+            self.fields['document_type'].choices = filtered
+
+
+class DocumentFilterForm(NetBoxModelFilterSetForm):
+    model = Document
+
+    name = forms.CharField(required=False)
 
     document_type = forms.MultipleChoiceField(
-        choices=SiteDocTypeChoices,
-        required=False
+        choices=DocTypeChoices,
+        required=False,
     )
 
-    tag = TagFilterField(model)
-
-
-#### Location Document Form & Filter Form
-class LocationDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    site = DynamicModelChoiceField(
-        queryset=Site.objects.all()
-    )
-
-    location = DynamicModelChoiceField(
-        queryset=Location.objects.all(),
-        query_params={
-            'site_id': '$site'
-        }
-    )
-
-    class Meta:
-        model = LocationDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'site', 'location', 'comments', 'tags')
-
-class LocationDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = LocationDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    site = DynamicModelChoiceField(
-        queryset=Site.objects.all(),
-        required=False
-    )
-
-    location = DynamicModelChoiceField(
-        queryset=Location.objects.all(),
-        query_params={
-            'site_id': '$site'
-        },
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=LocationDocTypeChoices,
-        required=False
-    )
-
-    tag = TagFilterField(model)
-
-
-#### Device Document Form & Filter Form
-class DeviceDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    device = DynamicModelChoiceField(
-        queryset=Device.objects.all()
-    )
-
-    class Meta:
-        model = DeviceDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'device', 'comments', 'tags')
-
-class DeviceDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = DeviceDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    device = forms.ModelMultipleChoiceField(
-        queryset=Device.objects.all(),
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=DeviceDocTypeChoices,
-        required=False
-    )
-
-    tag = TagFilterField(model)
-
-
-#### Device Type Document Form & Filter Form
-class DeviceTypeDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    device_type = DynamicModelChoiceField(
-        queryset=DeviceType.objects.all()
-    )
-
-    class Meta:
-        model = DeviceTypeDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'device_type', 'comments', 'tags')
-
-class DeviceTypeDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = DeviceTypeDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    device = forms.ModelMultipleChoiceField(
-        queryset=DeviceType.objects.all(),
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=DeviceTypeDocTypeChoices,
-        required=False
-    )
-
-    tag = TagFilterField(model)
-
-
-#### Module Type Document Form & Filter Form
-class ModuleTypeDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    module_type = DynamicModelChoiceField(
-        queryset=ModuleType.objects.all()
-    )
-
-    class Meta:
-        model = ModuleTypeDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'module_type', 'comments', 'tags')
-
-class ModuleTypeDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = ModuleTypeDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    device = forms.ModelMultipleChoiceField(
-        queryset=ModuleType.objects.all(),
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=ModuleTypeDocTypeChoices,
-        required=False
-    )
-
-    tag = TagFilterField(model)
-
-
-#### Circuit Document Form & Filter Form
-class CircuitDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    circuit = DynamicModelChoiceField(
-        queryset=Circuit.objects.all()
-    )
-
-    class Meta:
-        model = CircuitDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'circuit', 'comments', 'tags')
-
-class CircuitDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = CircuitDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    circuit = forms.ModelMultipleChoiceField(
-        queryset=Circuit.objects.all(),
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=CircuitDocTypeChoices,
-        required=False
-    )
-
-    tag = TagFilterField(model)
-
-#### VM Document Form & Filter Form
-class VMDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    vm = DynamicModelChoiceField(
-        queryset=VirtualMachine.objects.all()
-    )
-
-    class Meta:
-        model = VMDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'vm', 'comments', 'tags')
-
-class VMDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = VMDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    vm = forms.ModelMultipleChoiceField(
-        queryset=VirtualMachine.objects.all(),
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=VMDocTypeChoices,
-        required=False
-    )
-
-    tag = TagFilterField(model)
-
-#### Circuit Provider Document Form & Filter Form
-class CircuitProviderDocumentForm(NetBoxModelForm):
-    comments = CommentField()
-
-    provider = DynamicModelChoiceField(
-        queryset=Provider.objects.all()
-    )
-
-    class Meta:
-        model = CircuitProviderDocument
-        fields = ('name', 'document', 'external_url', 'document_type', 'provider', 'comments', 'tags')
-
-class CircuitProviderDocumentFilterForm(NetBoxModelFilterSetForm):
-    model = CircuitProviderDocument
-
-    name = forms.CharField(
-        required=False
-    )
-
-    provider = forms.ModelMultipleChoiceField(
-        queryset=Provider.objects.all(),
-        required=False
-    )
-
-    document_type = forms.MultipleChoiceField(
-        choices=CircuitProviderDocTypeChoices,
-        required=False
+    content_type = ContentTypeChoiceField(
+        queryset=ContentType.objects.all(),
+        required=False,
+        label='Object Type',
     )
 
     tag = TagFilterField(model)

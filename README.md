@@ -1,28 +1,26 @@
 # Netbox Documents Plugin
 
-A plugin designed to faciliate the storage of site, circuit, device type and device specific documents within [NetBox](https://github.com/netbox-community/netbox)
+A plugin designed to facilitate the storage of documents against any object within [NetBox](https://github.com/netbox-community/netbox).
 
 ## Features
 
-* Store documents against the following NetBox models:
-   - Circuits
-   - Devices
-   - Device Types
-   - Module Types
-   - Sites
-   - Locations
+* Attach documents to **any** NetBox model, including:
+   - Sites, Locations
+   - Devices, Device Types, Module Types
+   - Circuits, Circuit Providers
    - Virtual Machines
-   - Circuit Providers
-
-* Upload documents to your NetBox media/ folder or other Django supported storage method e.g. S3
-* Supports a wide array of common file types (bmp, gif, jpeg, jpg, png, pdf, txt, doc, docx, xls, xlsx, xlsm)
-* Store links to external URL's to save duplication of remote documents
-
+* Upload documents to your NetBox media/ folder or any Django-supported storage backend (e.g. S3)
+* Store links to external URLs to avoid duplicating remote documents
+* Supports a wide array of file types: bmp, gif, jpeg, jpg, png, pdf, txt, doc, docx, xls, xlsx, xlsm, tif, tiff, drawio, svg, webp, html, pptx
+* Add custom document types via plugin configuration
+* Control which document types are available per model
+* Documents panel appears on object detail pages with permission-aware action buttons
 
 ## Compatibility
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
+|     4.3+       |      0.8.0     |
 |     4.3+       |      0.7.4     |
 |     4.2+       |      0.7.2     |
 |  4.0 - 4.1     |      0.7.0     |
@@ -31,11 +29,42 @@ A plugin designed to faciliate the storage of site, circuit, device type and dev
 | 3.3.x - 3.4.x  |      0.5.1     |
 
 
+## Upgrading to 0.8.0
+
+> **Breaking Changes:** Version 0.8.0 is a major refactoring. Please read carefully before upgrading.
+
+### What changed
+
+The plugin previously used 8 separate database models (SiteDocument, DeviceDocument, CircuitDocument, etc.). Version 0.8.0 replaces these with a single unified `Document` model using Django's ContentType framework (GenericForeignKey). This enables documents to be attached to any NetBox model.
+
+### Breaking changes
+
+* **API endpoints changed:** The 8 separate API endpoints (`/api/plugins/netbox-documents/site-documents/`, `/api/plugins/netbox-documents/device-documents/`, etc.) have been replaced with a single endpoint: `/api/plugins/netbox-documents/documents/`. API clients must be updated.
+* **URL paths changed:** All web UI paths have changed from model-specific paths (e.g. `/plugins/documents/site-document/`) to a single path: `/plugins/documents/documents/`. Any bookmarks or external links will need updating.
+* **Permissions renamed:** Model-specific permissions (e.g. `view_sitedocument`, `add_devicedocument`) are replaced with unified permissions: `view_document`, `add_document`, `change_document`, `delete_document`. Permission assignments will need updating.
+* **FIELD_CHOICES key changed:** The per-model `DocTypeChoices` keys (e.g. `DocTypeChoices.site`, `DocTypeChoices.device`) are replaced with a single key: `DocTypeChoices.document`. See the configuration section below for the new approach to custom document types.
+* **Configuration simplified:** The 16 per-model settings (`enable_site_documents`, `site_documents_location`, etc.) have been removed. They are replaced by a single `documents_location` setting. The documents panel now always appears on supported model detail pages. Custom document types are now configured via `custom_doc_types` instead of `FIELD_CHOICES`.
+
+### Upgrade procedure
+
+1. **Back up your database** before upgrading.
+2. Install the new version: `pip install netbox-documents==0.8.0`
+3. Run migrations: `python manage.py migrate`
+   - Migration 0009 creates the new unified `Document` table
+   - Migration 0010 copies all data from the 8 old tables into the new table, preserving timestamps, tags, and custom field data
+   - Migration 0011 drops the old tables
+4. Update any API integrations to use the new `/api/plugins/netbox-documents/documents/` endpoint
+5. Update any permission assignments to use the new `document` permission names
+6. Update your `PLUGINS_CONFIG` if you used `FIELD_CHOICES` for custom document types (see below)
+7. Restart NetBox: `sudo systemctl restart netbox`
+8. Re-index search: `python manage.py reindex netbox_documents`
+
+
 ## Installation
 
-A working installation of Netbox 4.0+ is required. **NOTE: Netbox 3.5, 4.0 & 4.2 introduced breaking changes for plugins, please use the correct plugin version for your netbox install.**
+A working installation of NetBox 4.3+ is required.
 
-#### Package Installation from PyPi
+#### Package Installation from PyPI
 
 Activate your virtual env and install via pip:
 
@@ -44,15 +73,15 @@ $ source /opt/netbox/venv/bin/activate
 (venv) $ pip install netbox-documents
 ```
 
-To ensure the Netbox Documents plugin is automatically re-installed during future upgrades, add the package to your `local_requirements.txt` :
+To ensure the plugin is automatically re-installed during future upgrades, add the package to your `local_requirements.txt`:
 
-```no-highlight
+```
 # echo netbox-documents >> local_requirements.txt
 ```
 
 #### Enable the Plugin
 
-In the Netbox `configuration.py` configuration file add or update the PLUGINS parameter, adding `netbox_documents`:
+In the NetBox `configuration.py` file add or update the PLUGINS parameter:
 
 ```python
 PLUGINS = [
@@ -60,111 +89,155 @@ PLUGINS = [
 ]
 ```
 
-(Optional) Add or update a PLUGINS_CONFIG parameter in `configuration.py` to configure plugin settings. Options shown below are the configured defaults:
-
-```python
-PLUGINS_CONFIG = {
-     'netbox_documents': {
-         # Enable the management of site specific documents (True/False)
-         'enable_site_documents': True,
-         # Enable the management of location specific documents (True/False)
-         'enable_location_documents': True,
-         # Enable the management of circuit specific documents (True/False)
-         'enable_circuit_documents': True,
-         # Enable the management of device specific documents (True/False)
-         'enable_device_documents': True,
-         # Enable the management of device type specific documents (True/False)
-         'enable_device_type_documents': True,
-         # Enable the management of module type specific documents (True/False)
-         'enable_module_type_documents': True,
-         # Enable the global menu options (True/False)   
-         'enable_navigation_menu': True,
-         # Location to inject the document widget in the site view (left/right)
-         'site_documents_location': 'left',
-         # Location to inject the document widget in the location view (left/right)
-         'location_documents_location': 'left',
-         # Location to inject the document widget in the device view (left/right
-         'device_documents_location': 'left',
-         # Location to inject the document type widget in the device type view (left/right
-         'device_type_documents_location': 'left',
-         # Location to inject the document widget in the device view (left/right
-         'circuit_documents_location': 'left'
-     }
-}
-
-```
-
-(Optional) Add or replace the built-in Document Type choices via Netbox's [`FIELD_CHOICES`](https://netbox.readthedocs.io/en/feature/configuration/optional-settings/#field_choices) configuration parameter:
-
-The colours that can be used are listed in the Netbox CSS netbox-light.css:
-
-(https://github.com/netbox-community/netbox/blob/develop/netbox/project-static/dist/netbox-light.css)
-
-The bg- must not be specified in the configuration.
-Here are a few examples from the CSS:
-
-* bg-indigo = #6610f2 --> 'indigo'
-* bg-blue = #0d6efd --> 'blue'
-* bg-purple = #6f42c1 --> 'purple'
-* bg-pink = #d63384 --> 'pink'
-* bg-red = #dc3545 --> 'red'
-* bg-orange = #fd7e14 --> 'orange'
-* bg-yellow = #ffc107 --> 'yellow'
-* bg-green = #198754 --> 'green'
-* bg-teal = #20c997 --> 'teal'
-* bg-cyan = #0dcaf0 --> 'cyan'
-* bg-gray = #adb5bd --> 'gray'
-* bg-black = #000 --> 'black'
-* bg-white --> 'white'
-
-```python
-FIELD_CHOICES = {
-    'netbox_documents.DocTypeChoices.site+': (
-        ('mydocument', 'My Custom Site Document Type', 'green'),
-    ),
-    'netbox_documents.DocTypeChoices.location+': (
-        ('mydocument', 'My Custom Location Document Type', 'green'),
-    ),
-    'netbox_documents.DocTypeChoices.device+': (
-        ('mydocument', 'My Custom Device Document Type', 'green'),
-    ),
-    'netbox_documents.DocTypeChoices.devicetype+': (
-        ('mydocument', 'My Custom Device Type Document Type', 'green'),
-    ),
-    'netbox_documents.DocTypeChoices.moduletype+': (
-        ('mydocument', 'My Custom Module Type Document Type', 'green'),
-    ),
-    'netbox_documents.DocTypeChoices.circuit+': (
-        ('mydocument', 'My Custom Circuit Document Type', 'green'),
-    )
-}
-```
-
 #### Apply Database Migrations
-
-Apply database migrations with Netbox `manage.py`:
 
 ```
 (venv) $ python manage.py migrate
 ```
 
-#### Restart Netbox
-
-Restart the Netbox service to apply changes:
+#### Restart NetBox
 
 ```
 sudo systemctl restart netbox
 ```
 
-#### Re-index Netbox search index (Upgrade to 3.4 only)
 
-If you are upgrading from Netbox 3.3 or above to Netbox 3.4, any previously inserted documents may not show up in the new search feature. To resolve this, re-index the plugin:
+## Configuration
+
+Add or update a `PLUGINS_CONFIG` parameter in `configuration.py` to configure plugin settings. All settings are optional -- the defaults are shown below:
+
+```python
+PLUGINS_CONFIG = {
+    'netbox_documents': {
+
+        # Enable the global navigation menu
+        'enable_navigation_menu': True,
+
+        # Location of the documents panel on object detail pages (left/right)
+        'documents_location': 'left',
+
+        # Custom document types (see below)
+        'custom_doc_types': [],
+
+        # Per-model document type filtering (see below)
+        'allowed_doc_types': {},
+    }
+}
+```
+
+### Custom Document Types
+
+Add your own document types by defining them in `custom_doc_types`. Each entry is a tuple of `(value, label, color)`:
+
+```python
+PLUGINS_CONFIG = {
+    'netbox_documents': {
+        'custom_doc_types': [
+            ('sla', 'SLA Document', 'teal'),
+            ('warranty', 'Warranty Document', 'cyan'),
+            ('asbuilt', 'As-Built Drawing', 'lime'),
+            ('audit', 'Audit Report', 'black'),
+        ],
+    }
+}
+```
+
+Custom types appear alongside the built-in types in all dropdowns and filters. Available colors: green, purple, orange, indigo, yellow, pink, blue, red, gray, teal, cyan, white, black.
+
+The built-in document types are: diagram, floorplan, purchaseorder, quote, wirelessmodel, manual, supportcontract, circuitcontract, contract, msa, kmz, other.
+
+### Per-Model Document Type Filtering
+
+Control which document types appear in the dropdown for each model using `allowed_doc_types`. Keys are model labels in `app_label.model` format. The special key `__all__` sets the default for any model not explicitly listed:
+
+```python
+PLUGINS_CONFIG = {
+    'netbox_documents': {
+        'allowed_doc_types': {
+            'dcim.site': ['diagram', 'floorplan', 'purchaseorder', 'quote', 'wirelessmodel', 'other'],
+            'dcim.location': ['diagram', 'floorplan', 'purchaseorder', 'quote', 'wirelessmodel', 'other'],
+            'dcim.device': ['diagram', 'manual', 'purchaseorder', 'quote', 'supportcontract', 'other'],
+            'dcim.devicetype': ['diagram', 'manual', 'purchaseorder', 'quote', 'supportcontract', 'other'],
+            'dcim.moduletype': ['diagram', 'manual', 'purchaseorder', 'quote', 'supportcontract', 'other'],
+            'circuits.circuit': ['circuitcontract', 'diagram', 'purchaseorder', 'quote', 'kmz', 'other'],
+            'circuits.provider': ['contract', 'msa', 'purchaseorder', 'quote', 'other'],
+            'virtualization.virtualmachine': ['diagram', 'manual', 'purchaseorder', 'quote', 'supportcontract', 'other'],
+        },
+    }
+}
+```
+
+If `allowed_doc_types` is empty (`{}`), all document types are shown for all models (the default).
+
+Use the `__all__` key to set a default for all models, then override specific models as needed:
+
+```python
+PLUGINS_CONFIG = {
+    'netbox_documents': {
+        'allowed_doc_types': {
+            # Default: only show these types for all models
+            '__all__': ['diagram', 'purchaseorder', 'quote', 'other'],
+
+            # Override: Sites also get floorplan and wirelessmodel
+            'dcim.site': ['diagram', 'floorplan', 'purchaseorder', 'quote', 'wirelessmodel', 'other'],
+
+            # Override: Circuits get circuit-specific types
+            'circuits.circuit': ['circuitcontract', 'diagram', 'purchaseorder', 'quote', 'kmz', 'other'],
+        },
+    }
+}
+```
+
+Custom types defined in `custom_doc_types` can also be referenced in `allowed_doc_types`:
+
+```python
+PLUGINS_CONFIG = {
+    'netbox_documents': {
+        'custom_doc_types': [
+            ('sla', 'SLA Document', 'teal'),
+        ],
+        'allowed_doc_types': {
+            '__all__': ['diagram', 'purchaseorder', 'quote', 'other'],
+            'circuits.provider': ['contract', 'msa', 'sla', 'other'],
+        },
+    }
+}
+```
+
+
+## API Usage
+
+All documents are accessed through a single REST API endpoint:
 
 ```
-(venv) $ python manage.py reindex netbox_documents
+GET    /api/plugins/netbox-documents/documents/          # List all documents
+POST   /api/plugins/netbox-documents/documents/          # Create a document
+GET    /api/plugins/netbox-documents/documents/{id}/     # Get a document
+PUT    /api/plugins/netbox-documents/documents/{id}/     # Update a document
+DELETE /api/plugins/netbox-documents/documents/{id}/     # Delete a document
 ```
 
-### Screenshots
+Filter by object type and ID:
+
+```
+GET /api/plugins/netbox-documents/documents/?content_type=dcim.site&object_id=1
+```
+
+Create a document attached to a site (ID 1):
+
+```json
+POST /api/plugins/netbox-documents/documents/
+{
+    "name": "Network Diagram",
+    "document_type": "diagram",
+    "external_url": "https://example.com/diagram.pdf",
+    "content_type": "dcim.site",
+    "object_id": 1
+}
+```
+
+
+## Screenshots
 
 ![Site Document View](docs/img/siteview.png)
 ![Add Circuit Document](docs/img/addcircuit.png)

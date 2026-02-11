@@ -1,44 +1,9 @@
 from netbox.api.viewsets import NetBoxModelViewSet
-
 from .. import models, filtersets
-from .serializers import SiteDocumentSerializer, LocationDocumentSerializer, DeviceDocumentSerializer, DeviceTypeDocumentSerializer, ModuleTypeDocumentSerializer, CircuitDocumentSerializer, VMDocumentSerializer, CircuitProviderDocumentSerializer
+from .serializers import DocumentSerializer
 
-class SiteDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.SiteDocument.objects.prefetch_related('tags')
-    serializer_class = SiteDocumentSerializer
-    filterset_class = filtersets.SiteDocumentFilterSet
 
-class LocationDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.LocationDocument.objects.prefetch_related('tags')
-    serializer_class = LocationDocumentSerializer
-    filterset_class = filtersets.LocationDocumentFilterSet
-
-class DeviceDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.DeviceDocument.objects.prefetch_related('tags')
-    serializer_class = DeviceDocumentSerializer
-    filterset_class = filtersets.DeviceDocumentFilterSet
-
-class DeviceTypeDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.DeviceTypeDocument.objects.prefetch_related('tags')
-    serializer_class = DeviceTypeDocumentSerializer
-    filterset_class = filtersets.DeviceTypeDocumentFilterSet
-
-class ModuleTypeDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.ModuleTypeDocument.objects.prefetch_related('tags')
-    serializer_class = ModuleTypeDocumentSerializer
-    filterset_class = filtersets.ModuleTypeDocumentFilterSet
-
-class CircuitDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.CircuitDocument.objects.prefetch_related('tags')
-    serializer_class = CircuitDocumentSerializer
-    filterset_class = filtersets.CircuitDocumentFilterSet
-
-class VMDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.VMDocument.objects.prefetch_related('tags')
-    serializer_class = VMDocumentSerializer
-    filterset_class = filtersets.VMDocumentFilterSet
-
-class CircuitProviderDocumentViewSet(NetBoxModelViewSet):
-    queryset = models.CircuitProviderDocument.objects.prefetch_related('tags')
-    serializer_class = CircuitProviderDocumentSerializer
-    filterset_class = filtersets.CircuitProviderDocumentFilterSet
+class DocumentViewSet(NetBoxModelViewSet):
+    queryset = models.Document.objects.select_related('content_type').prefetch_related('tags')
+    serializer_class = DocumentSerializer
+    filterset_class = filtersets.DocumentFilterSet

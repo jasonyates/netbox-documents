@@ -1,161 +1,44 @@
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
+
 from netbox.views import generic
 from . import forms, models, tables, filtersets
 
 
-### SiteDocument
-class SiteDocumentView(generic.ObjectView):
-    queryset = models.SiteDocument.objects.all()
-
-class SiteDocumentListView(generic.ObjectListView):
-    queryset = models.SiteDocument.objects.all()
-    table = tables.SiteDocumentTable
-    filterset = filtersets.SiteDocumentFilterSet
-    filterset_form = forms.SiteDocumentFilterForm
-
-class SiteDocumentEditView(generic.ObjectEditView):
-    queryset = models.SiteDocument.objects.all()
-    form = forms.SiteDocumentForm
-
-    template_name = 'netbox_documents/sitedocument_edit.html'
-
-class SiteDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.SiteDocument.objects.all()
+class DocumentView(generic.ObjectView):
+    queryset = models.Document.objects.select_related('content_type').all()
 
 
-### LocationDocument
-class LocationDocumentView(generic.ObjectView):
-    queryset = models.LocationDocument.objects.all()
-
-class LocationDocumentListView(generic.ObjectListView):
-    queryset = models.LocationDocument.objects.all()
-    table = tables.LocationDocumentTable
-    filterset = filtersets.LocationDocumentFilterSet
-    filterset_form = forms.LocationDocumentFilterForm
-
-class LocationDocumentEditView(generic.ObjectEditView):
-    queryset = models.LocationDocument.objects.all()
-    form = forms.LocationDocumentForm
-
-    template_name = 'netbox_documents/locationdocument_edit.html'
-
-class LocationDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.LocationDocument.objects.all()
+class DocumentListView(generic.ObjectListView):
+    queryset = models.Document.objects.select_related('content_type').all()
+    table = tables.DocumentTable
+    filterset = filtersets.DocumentFilterSet
+    filterset_form = forms.DocumentFilterForm
+    actions = {
+        'export': {'view'},
+        'bulk_delete': {'delete'},
+    }
 
 
-### DeviceDocument
-class DeviceDocumentView(generic.ObjectView):
-    queryset = models.DeviceDocument.objects.all()
+class DocumentEditView(generic.ObjectEditView):
+    queryset = models.Document.objects.all()
+    form = forms.DocumentForm
+    template_name = 'netbox_documents/document_edit.html'
 
-class DeviceDocumentListView(generic.ObjectListView):
-    queryset = models.DeviceDocument.objects.all()
-    table = tables.DeviceDocumentTable
-    filterset = filtersets.DeviceDocumentFilterSet
-    filterset_form = forms.DeviceDocumentFilterForm
-
-class DeviceDocumentEditView(generic.ObjectEditView):
-    queryset = models.DeviceDocument.objects.all()
-    form = forms.DeviceDocumentForm
-
-    template_name = 'netbox_documents/devicedocument_edit.html'
-
-class DeviceDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.DeviceDocument.objects.all()
+    def alter_object(self, instance, request, args, kwargs):
+        if not instance.pk:
+            content_type = request.GET.get('content_type')
+            object_id = request.GET.get('object_id')
+            if content_type and object_id:
+                instance.content_type = get_object_or_404(ContentType, pk=content_type)
+                instance.object_id = int(object_id)
+        return instance
 
 
-### DeviceTypeDocument
-class DeviceTypeDocumentView(generic.ObjectView):
-    queryset = models.DeviceTypeDocument.objects.all()
-
-class DeviceTypeDocumentListView(generic.ObjectListView):
-    queryset = models.DeviceTypeDocument.objects.all()
-    table = tables.DeviceTypeDocumentTable
-    filterset = filtersets.DeviceTypeDocumentFilterSet
-    filterset_form = forms.DeviceTypeDocumentFilterForm
-
-class DeviceTypeDocumentEditView(generic.ObjectEditView):
-    queryset = models.DeviceTypeDocument.objects.all()
-    form = forms.DeviceTypeDocumentForm
-
-    template_name = 'netbox_documents/devicetypedocument_edit.html'
-
-class DeviceTypeDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.DeviceTypeDocument.objects.all()
+class DocumentDeleteView(generic.ObjectDeleteView):
+    queryset = models.Document.objects.all()
 
 
-### ModuleTypeDocument
-class ModuleTypeDocumentView(generic.ObjectView):
-    queryset = models.ModuleTypeDocument.objects.all()
-
-class ModuleTypeDocumentListView(generic.ObjectListView):
-    queryset = models.ModuleTypeDocument.objects.all()
-    table = tables.ModuleTypeDocumentTable
-    filterset = filtersets.ModuleTypeDocumentFilterSet
-    filterset_form = forms.ModuleTypeDocumentFilterForm
-
-class ModuleTypeDocumentEditView(generic.ObjectEditView):
-    queryset = models.ModuleTypeDocument.objects.all()
-    form = forms.ModuleTypeDocumentForm
-
-    template_name = 'netbox_documents/moduletypedocument_edit.html'
-
-class ModuleTypeDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.ModuleTypeDocument.objects.all()
-
-
-### CircuitDocument
-class CircuitDocumentView(generic.ObjectView):
-    queryset = models.CircuitDocument.objects.all()
-
-class CircuitDocumentListView(generic.ObjectListView):
-    queryset = models.CircuitDocument.objects.all()
-    table = tables.CircuitDocumentTable
-    filterset = filtersets.CircuitDocumentFilterSet
-    filterset_form = forms.CircuitDocumentFilterForm
-
-class CircuitDocumentEditView(generic.ObjectEditView):
-    queryset = models.CircuitDocument.objects.all()
-    form = forms.CircuitDocumentForm
-
-    template_name = 'netbox_documents/circuitdocument_edit.html'
-
-class CircuitDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.CircuitDocument.objects.all()
-
-
-### VMDocument
-class VMDocumentView(generic.ObjectView):
-    queryset = models.VMDocument.objects.all()
-
-class VMDocumentListView(generic.ObjectListView):
-    queryset = models.VMDocument.objects.all()
-    table = tables.VMDocumentTable
-    filterset = filtersets.VMDocumentFilterSet
-    filterset_form = forms.VMDocumentFilterForm
-
-class VMDocumentEditView(generic.ObjectEditView):
-    queryset = models.VMDocument.objects.all()
-    form = forms.VMDocumentForm
-
-    template_name = 'netbox_documents/vmdocument_edit.html'
-
-class VMDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.VMDocument.objects.all()
-
-### CircuitProviderDocument
-class CircuitProviderDocumentView(generic.ObjectView):
-    queryset = models.CircuitProviderDocument.objects.all()
-
-class CircuitProviderDocumentListView(generic.ObjectListView):
-    queryset = models.CircuitProviderDocument.objects.all()
-    table = tables.CircuitProviderDocumentTable
-    filterset = filtersets.CircuitProviderDocumentFilterSet
-    filterset_form = forms.CircuitProviderDocumentFilterForm
-
-class CircuitProviderDocumentEditView(generic.ObjectEditView):
-    queryset = models.CircuitProviderDocument.objects.all()
-    form = forms.CircuitProviderDocumentForm
-
-    template_name = 'netbox_documents/circuitproviderdocument_edit.html'
-
-class CircuitProviderDocumentDeleteView(generic.ObjectDeleteView):
-    queryset = models.CircuitProviderDocument.objects.all()
+class DocumentBulkDeleteView(generic.BulkDeleteView):
+    queryset = models.Document.objects.all()
+    table = tables.DocumentTable
