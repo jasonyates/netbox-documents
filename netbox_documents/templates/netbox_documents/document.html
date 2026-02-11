@@ -19,7 +19,7 @@
             </tr>
             <tr>
               <th scope="row">Assigned Object</th>
-              <td><a href="{{ object.assigned_object.get_absolute_url }}">{{ object.assigned_object }}</a></td>
+              <td>{{ object.assigned_object|linkify }}</td>
             </tr>
             <tr>
               <th scope="row">Document Type</th>
