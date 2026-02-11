@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from netbox.plugins import PluginTemplateExtension
 from django.conf import settings
@@ -5,17 +6,18 @@ from .models import Document
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
-# Models that get the documents panel on their detail pages
-DOCUMENT_MODELS = [
-    'dcim.site',
-    'dcim.location',
-    'dcim.device',
-    'dcim.devicetype',
-    'dcim.moduletype',
-    'circuits.circuit',
-    'virtualization.virtualmachine',
-    'circuits.provider',
-]
+
+def _get_registered_models():
+    """
+    Discover all models that have a detail view (get_absolute_url).
+    This allows documents to be attached to any NetBox model automatically.
+    """
+    model_labels = []
+    for model in apps.get_models():
+        if hasattr(model, 'get_absolute_url'):
+            label = f'{model._meta.app_label}.{model._meta.model_name}'
+            model_labels.append(label)
+    return model_labels
 
 
 def _make_extension(model_label):
@@ -57,6 +59,6 @@ def _make_extension(model_label):
 
 
 template_extensions = [
-    _make_extension(model_label)
-    for model_label in DOCUMENT_MODELS
+    _make_extension(label)
+    for label in _get_registered_models()
 ]
