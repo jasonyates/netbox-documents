@@ -20,7 +20,7 @@ A plugin designed to facilitate the storage of documents against any object with
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
-|     4.3+       |      0.8.0     |
+|     4.3+       |      0.8.1     |
 |     4.3+       |      0.7.4     |
 |     4.2+       |      0.7.2     |
 |  4.0 - 4.1     |      0.7.0     |
