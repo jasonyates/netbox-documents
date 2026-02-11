@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -6,117 +9,82 @@ from netbox.models import NetBoxModel
 from utilities.choices import ChoiceSet
 from .utils import file_upload
 
-class SiteDocTypeChoices(ChoiceSet):
 
-    key = 'DocTypeChoices.site'
-
-    CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('floorplan', 'Floor Plan', 'purple'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('wirelessmodel', 'Wireless Model (Ekahau)', 'yellow'),
-        ('other', 'Other', 'gray'),
-    ]
-
-class LocationDocTypeChoices(ChoiceSet):
-
-    key = 'DocTypeChoices.location'
-
-    CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('floorplan', 'Floor Plan', 'purple'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('wirelessmodel', 'Wireless Model', 'yellow'),
-        ('other', 'Other', 'gray'),
-    ]
-
-class DeviceDocTypeChoices(ChoiceSet):
-
-    key = 'DocTypeChoices.device'
-
-    CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('manual', 'Manual', 'pink'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('supportcontract', 'Support Contract', 'blue'),
-        ('other', 'Other', 'gray'),
-    ]
+# Built-in document type choices (always available)
+_BUILTIN_CHOICES = [
+    ('diagram', 'Network Diagram', 'green'),
+    ('floorplan', 'Floor Plan', 'purple'),
+    ('purchaseorder', 'Purchase Order', 'orange'),
+    ('quote', 'Quote', 'indigo'),
+    ('wirelessmodel', 'Wireless Model (Ekahau)', 'yellow'),
+    ('manual', 'Manual', 'pink'),
+    ('supportcontract', 'Support Contract', 'blue'),
+    ('circuitcontract', 'Circuit Contract', 'red'),
+    ('contract', 'Contract', 'red'),
+    ('msa', 'MSA', 'green'),
+    ('kmz', 'KMZ', 'blue'),
+    ('other', 'Other', 'gray'),
+]
 
 
-class DeviceTypeDocTypeChoices(ChoiceSet):
+def _build_all_choices():
+    """Combine built-in choices with any user-defined custom types from plugin settings."""
+    plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
+    custom_types = plugin_settings.get('custom_doc_types', [])
 
-    key = 'DocTypeChoices.devicetype'
+    all_choices = list(_BUILTIN_CHOICES)
+    seen = {c[0] for c in all_choices}
 
-    CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('manual', 'Manual', 'pink'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('supportcontract', 'Support Contract', 'blue'),
-        ('other', 'Other', 'gray'),
-    ]
+    for entry in custom_types:
+        if len(entry) != 3:
+            continue
+        value, label, color = entry
+        if value not in seen:
+            all_choices.append((value, label, color))
+            seen.add(value)
 
-class ModuleTypeDocTypeChoices(ChoiceSet):
-
-    key = 'DocTypeChoices.moduletype'
-
-    CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('manual', 'Manual', 'pink'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('supportcontract', 'Support Contract', 'blue'),
-        ('other', 'Other', 'gray'),
-    ]
+    return all_choices
 
 
-class CircuitDocTypeChoices(ChoiceSet):
-    
-    key = 'DocTypeChoices.circuit'
+class DocTypeChoices(ChoiceSet):
+    """Document type choices -- built-in types plus any custom types from plugin config."""
 
-    CHOICES = [
-        ('circuitcontract', 'Circuit Contract', 'red'),
-        ('diagram', 'Network Diagram', 'green'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('kmz', 'KMZ', 'blue'),
-        ('other', 'Other', 'gray'),
-    ]
+    key = 'DocTypeChoices.document'
 
-class CircuitProviderDocTypeChoices(ChoiceSet):
-    
-    key = 'DocTypeChoices.circuitprovider'
-
-    CHOICES = [
-        ('contract', 'Contract', 'red'),
-        ('msa', 'MSA', 'green'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('other', 'Other', 'gray'),
-    ]
+    CHOICES = _build_all_choices()
 
 
-class VMDocTypeChoices(ChoiceSet):
+def get_allowed_doc_types(content_type_id):
+    """
+    Return the list of allowed document type values for the given content_type,
+    or None if all types should be shown.
+    """
+    plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
+    allowed_map = plugin_settings.get('allowed_doc_types', {})
 
-    key = 'DocTypeChoices.virtualmachine'
+    if not allowed_map:
+        return None
 
-    CHOICES = [
-        ('diagram', 'Network Diagram', 'green'),
-        ('manual', 'Manual', 'pink'),
-        ('purchaseorder', 'Purchase Order', 'orange'),
-        ('quote', 'Quote', 'indigo'),
-        ('supportcontract', 'Support Contract', 'blue'),
-        ('other', 'Other', 'gray'),
-    ]
+    if content_type_id is None:
+        return allowed_map.get('__all__')
 
-class SiteDocument(NetBoxModel):
+    try:
+        ct = ContentType.objects.get(pk=content_type_id)
+        model_label = f'{ct.app_label}.{ct.model}'
+    except ContentType.DoesNotExist:
+        return allowed_map.get('__all__')
+
+    if model_label in allowed_map:
+        return allowed_map[model_label]
+
+    return allowed_map.get('__all__')
+
+
+class Document(NetBoxModel):
     name = models.CharField(
         max_length=100,
         blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename or url will be used.'
+        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename or URL will be used.'
     )
 
     document = models.FileField(
@@ -131,41 +99,44 @@ class SiteDocument(NetBoxModel):
 
     document_type = models.CharField(
         max_length=30,
-        choices=SiteDocTypeChoices
-    )
-
-    site = models.ForeignKey(
-        to='dcim.Site',
-        on_delete=models.CASCADE,
-        related_name='documents'
+        choices=DocTypeChoices
     )
 
     comments = models.TextField(
         blank=True
     )
 
+    # Generic relation fields
+    content_type = models.ForeignKey(
+        to=ContentType,
+        on_delete=models.CASCADE
+    )
+    object_id = models.PositiveBigIntegerField()
+    assigned_object = GenericForeignKey('content_type', 'object_id')
+
+    clone_fields = (
+        'content_type', 'object_id', 'document_type',
+    )
+
     class Meta:
-        ordering = ('-created', 'name')
-        verbose_name_plural = "Site Documents"
-        verbose_name = "Site Document"
+        ordering = ('name',)
+        verbose_name = "Document"
+        verbose_name_plural = "Documents"
+        indexes = [
+            models.Index(fields=['content_type', 'object_id']),
+        ]
 
     def get_document_type_color(self):
-        return SiteDocTypeChoices.colors.get(self.document_type)
+        return DocTypeChoices.colors.get(self.document_type)
 
     @property
     def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
         expected_exceptions = [OSError]
-
         try:
             from botocore.exceptions import ClientError
             expected_exceptions.append(ClientError)
         except ImportError:
             pass
-
         try:
             return self.document.size
         except:
@@ -182,797 +153,28 @@ class SiteDocument(NetBoxModel):
     def __str__(self):
         if self.name:
             return self.name
-
-        elif self.external_url:
+        if self.external_url:
             return self.external_url
-
-        elif self.document:
+        if self.document:
             filename = self.document.name.rsplit('/', 1)[-1]
             return filename.split('_', 1)[1]
-
-        else:
-            return ""
+        return ""
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:sitedocument', args=[self.pk])
+        return reverse('plugins:netbox_documents:document', args=[self.pk])
 
     def clean(self):
         super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
         if not self.document and self.external_url == '':
             raise ValidationError("A document must contain an uploaded file or an external URL.")
         if self.document and self.external_url:
             raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
 
     def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
         if self.external_url == '':
-
             _name = self.document.name
-
-            # Delete file from disk
             super().delete(*args, **kwargs)
             self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
             self.document.name = _name
         else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)
-
-
-class LocationDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename or url will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=LocationDocTypeChoices
-    )
-
-    site = models.ForeignKey(
-        to='dcim.Site',
-        on_delete=models.CASCADE,
-        related_name='document'
-    )
-
-    location = models.ForeignKey(
-        to='dcim.Location',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    class Meta:
-        ordering = ('-created', 'name')
-        verbose_name_plural = "Location Documents"
-        verbose_name = "Location Document"
-
-    def get_document_type_color(self):
-        return LocationDocTypeChoices.colors.get(self.document_type)
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        elif self.document:
-            filename = self.document.name.rsplit('/', 1)[-1]
-            return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        elif self.external_url:
-            return self.external_url
-
-        elif self.document:
-            filename = self.document.name.rsplit('/', 1)[-1]
-            return filename.split('_', 1)[1]
-
-        else:
-            return ""
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:locationdocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-        if self.location.site != self.site:
-            raise ValidationError("Location must belong to Site.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)
-
-
-class DeviceDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=DeviceDocTypeChoices
-    )
-
-    device = models.ForeignKey(
-        to='dcim.Device',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "Device Documents"
-        verbose_name = "Device Document"
-
-    def get_document_type_color(self):
-        return DeviceDocTypeChoices.colors.get(self.document_type)
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        if self.external_url:
-            return self.external_url
-
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:devicedocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)
-
-
-
-class DeviceTypeDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-    
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=DeviceTypeDocTypeChoices
-    )
-
-    device_type = models.ForeignKey(
-        to='dcim.DeviceType',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "Device Type Documents"
-        verbose_name = "Device Type Document"
-
-    def get_document_type_color(self):
-        return DeviceTypeDocTypeChoices.colors.get(self.document_type)
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        if self.external_url:
-            return self.external_url
-
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:devicetypedocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)
-
-
-class ModuleTypeDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-    
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=ModuleTypeDocTypeChoices
-    )
-
-    module_type = models.ForeignKey(
-        to='dcim.ModuleType',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "Module Type Documents"
-        verbose_name = "Module Type Document"
-
-    def get_document_type_color(self):
-        return ModuleTypeDocTypeChoices.colors.get(self.document_type)
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        if self.external_url:
-            return self.external_url
-
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:moduletypedocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)            
-
-
-class CircuitDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=CircuitDocTypeChoices
-    )
-
-    circuit = models.ForeignKey(
-        to='circuits.Circuit',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    def get_document_type_color(self):
-        return CircuitDocTypeChoices.colors.get(self.document_type)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "Circuit Documents"
-        verbose_name = "Circuit Document"
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        if self.external_url:
-            return self.external_url
-
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:circuitdocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)
-
-
-class VMDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=VMDocTypeChoices
-    )
-
-    vm = models.ForeignKey(
-        to='virtualization.VirtualMachine',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "Virtual Machine Documents"
-        verbose_name = "Virtual Machine Document"
-
-    def get_document_type_color(self):
-        return VMDocTypeChoices.colors.get(self.document_type)
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        if self.external_url:
-            return self.external_url
-
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:vmdocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
-            super().delete(*args, **kwargs)
-
-class CircuitProviderDocument(NetBoxModel):
-    name = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='(Optional) Specify a name to display for this document. If no name is specified, the filename will be used.'
-    )
-
-    document = models.FileField(
-        upload_to=file_upload,
-        blank=True
-    )
-
-    external_url = models.URLField(
-        blank=True,
-        max_length=255
-    )
-
-    document_type = models.CharField(
-        max_length=30,
-        choices=CircuitProviderDocTypeChoices
-    )
-
-    provider = models.ForeignKey(
-        to='circuits.Provider',
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-
-    comments = models.TextField(
-        blank=True
-    )
-
-    def get_document_type_color(self):
-        return CircuitProviderDocTypeChoices.colors.get(self.document_type)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name_plural = "Circuit Provider Documents"
-        verbose_name = "Circuit Provider Document"
-
-    @property
-    def size(self):
-        """
-        Wrapper around `document.size` to suppress an OSError in case the file is inaccessible. Also opportunistically
-        catch other exceptions that we know other storage back-ends to throw.
-        """
-        expected_exceptions = [OSError]
-
-        try:
-            from botocore.exceptions import ClientError
-            expected_exceptions.append(ClientError)
-        except ImportError:
-            pass
-
-        try:
-            return self.document.size
-        except:
-            return None
-
-    @property
-    def filename(self):
-        if self.external_url:
-            return self.external_url
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def __str__(self):
-        if self.name:
-            return self.name
-
-        if self.external_url:
-            return self.external_url
-
-        filename = self.document.name.rsplit('/', 1)[-1]
-        return filename.split('_', 1)[1]
-
-    def get_absolute_url(self):
-        return reverse('plugins:netbox_documents:circuitproviderdocument', args=[self.pk])
-
-    def clean(self):
-        super().clean()
-
-        # Must have an uploaded document or an external URL. cannot have both
-        if not self.document and self.external_url == '':
-            raise ValidationError("A document must contain an uploaded file or an external URL.")
-        if self.document and self.external_url:
-            raise ValidationError("A document cannot contain both an uploaded file and an external URL.")
-
-    def delete(self, *args, **kwargs):
-
-        # Check if its a document or a URL
-        if self.external_url == '':
-
-            _name = self.document.name
-
-            # Delete file from disk
-            super().delete(*args, **kwargs)
-            self.document.delete(save=False)
-
-            # Restore the name of the document as it's re-used in the notifications later
-            self.document.name = _name
-        else:
-            # Straight delete of external URL
             super().delete(*args, **kwargs)

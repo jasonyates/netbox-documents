@@ -10,8 +10,8 @@ with open(path.join(top_level_directory, 'requirements.txt')) as file:
 
 setup(
     name='netbox-documents',
-    version='0.7.4',
-    description='Manage site, location, circuit and device diagrams and documents in Netbox',
+    version='0.8.0',
+    description='Attach documents and external URLs to any NetBox object',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Jason Yates',

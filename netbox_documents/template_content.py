@@ -1,211 +1,62 @@
+from django.contrib.contenttypes.models import ContentType
 from netbox.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import SiteDocument, LocationDocument, DeviceDocument, DeviceTypeDocument, ModuleTypeDocument, CircuitDocument, VMDocument, CircuitProviderDocument
+from .models import Document
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
-class SiteDocumentList(PluginTemplateExtension):
-    models = ['dcim.site']
+# Models that get the documents panel on their detail pages
+DOCUMENT_MODELS = [
+    'dcim.site',
+    'dcim.location',
+    'dcim.device',
+    'dcim.devicetype',
+    'dcim.moduletype',
+    'circuits.circuit',
+    'virtualization.virtualmachine',
+    'circuits.provider',
+]
 
-    def left_page(self):
 
-        if plugin_settings.get('enable_site_documents') and plugin_settings.get('site_documents_location') == 'left':
+def _make_extension(model_label):
+    """Factory function to create a PluginTemplateExtension class for a given model."""
 
-            return self.render('netbox_documents/sitedocument_include.html', extra_context={
-                'site_documents': SiteDocument.objects.filter(site=self.context['object']),
+    class DynamicDocumentList(PluginTemplateExtension):
+        models = [model_label]
+
+        def _get_documents(self):
+            obj = self.context['object']
+            ct = ContentType.objects.get_for_model(obj)
+            return Document.objects.filter(content_type=ct, object_id=obj.pk)
+
+        def _get_return_url(self):
+            return self.context['object'].get_absolute_url()
+
+        def _render_panel(self):
+            obj = self.context['object']
+            ct = ContentType.objects.get_for_model(obj)
+            return self.render('netbox_documents/document_include.html', extra_context={
+                'documents': self._get_documents(),
+                'content_type_id': ct.pk,
+                'return_url': self._get_return_url(),
             })
 
-        else:
+        def left_page(self):
+            if plugin_settings.get('documents_location', 'left') == 'left':
+                return self._render_panel()
             return ""
 
-    def right_page(self):
-
-        if plugin_settings.get('enable_site_documents') and plugin_settings.get('site_documents_location') == 'right':
-
-            return self.render('netbox_documents/sitedocument_include.html', extra_context={
-                'site_documents': SiteDocument.objects.filter(site=self.context['object']),
-            })
-
-        else:
+        def right_page(self):
+            if plugin_settings.get('documents_location', 'left') == 'right':
+                return self._render_panel()
             return ""
 
-
-class LocationDocumentList(PluginTemplateExtension):
-    models = ['dcim.location']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_location_documents') and plugin_settings.get('location_documents_location') == 'left':
-
-            return self.render('netbox_documents/locationdocument_include.html', extra_context={
-                'location_documents': LocationDocument.objects.filter(location=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_location_documents') and plugin_settings.get('location_documents_location') == 'right':
-
-            return self.render('netbox_documents/locationdocument_include.html', extra_context={
-                'location_documents': LocationDocument.objects.filter(location=self.context['object']),
-            })
-
-        else:
-            return ""
-
-
-class DeviceDocumentList(PluginTemplateExtension):
-    models = ['dcim.device']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_device_documents') and plugin_settings.get('device_documents_location') == 'left':
-
-            return self.render('netbox_documents/devicedocument_include.html', extra_context={
-                'device_documents': DeviceDocument.objects.filter(device=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_device_documents') and plugin_settings.get('device_documents_location') == 'right':
-
-            return self.render('netbox_documents/devicedocument_include.html', extra_context={
-                'device_documents': DeviceDocument.objects.filter(device=self.context['object']),
-            })
-
-        else:
-            return ""
-
-
-class DeviceTypeDocumentList(PluginTemplateExtension):
-    models = ['dcim.devicetype']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_device_type_documents') and plugin_settings.get('device_type_documents_location') == 'left':
-
-            return self.render('netbox_documents/devicetypedocument_include.html', extra_context={
-                'device_type_documents': DeviceTypeDocument.objects.filter(device_type=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_device_type_documents') and plugin_settings.get('device_type_documents_location') == 'right':
-
-            return self.render('netbox_documents/devicetypedocument_include.html', extra_context={
-                'device_type_documents': DeviceTypeDocument.objects.filter(device_type=self.context['object']),
-            })
-
-        else:
-            return ""
-
-class ModuleTypeDocumentList(PluginTemplateExtension):
-    models = ['dcim.moduletype']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_module_type_documents') and plugin_settings.get('module_type_documents_location') == 'left':
-
-            return self.render('netbox_documents/moduletypedocument_include.html', extra_context={
-                'module_type_documents': ModuleTypeDocument.objects.filter(module_type=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_module_type_documents') and plugin_settings.get('module_type_documents_location') == 'right':
-
-            return self.render('netbox_documents/moduletypedocument_include.html', extra_context={
-                'module_type_documents': ModuleTypeDocument.objects.filter(module_type=self.context['object']),
-            })
-
-        else:
-            return ""
-
-class CircuitDocumentList(PluginTemplateExtension):
-    models = ['circuits.circuit']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_circuit_documents') and plugin_settings.get('circuit_documents_location') == 'left':
-
-            return self.render('netbox_documents/circuitdocument_include.html', extra_context={
-                'circuit_documents': CircuitDocument.objects.filter(circuit=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_circuit_documents') and plugin_settings.get('circuit_documents_location') == 'right':
-
-            return self.render('netbox_documents/circuitdocument_include.html', extra_context={
-                'circuit_documents': CircuitDocument.objects.filter(circuit=self.context['object']),
-            })
-
-        else:
-            return ""
-
-class VMDocumentList(PluginTemplateExtension):
-    models = ['virtualization.virtualmachine']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_vm_documents') and plugin_settings.get('vm_documents_location') == 'left':
-
-            return self.render('netbox_documents/vmdocument_include.html', extra_context={
-                'vm_documents': VMDocument.objects.filter(vm=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_vm_documents') and plugin_settings.get('vm_documents_location') == 'right':
-
-            return self.render('netbox_documents/vmdocument_include.html', extra_context={
-                'vm_documents': VMDocument.objects.filter(vm=self.context['object']),
-            })
-
-        else:
-            return ""
-
-class CircuitProviderDocumentList(PluginTemplateExtension):
-    models = ['circuits.provider']
-
-    def left_page(self):
-
-        if plugin_settings.get('enable_circuit_provider_documents') and plugin_settings.get('circuit_provider_documents_location') == 'left':
-
-            return self.render('netbox_documents/circuitproviderdocument_include.html', extra_context={
-                'circuit_provider_documents': CircuitProviderDocument.objects.filter(provider=self.context['object']),
-            })
-
-        else:
-            return ""
-
-    def right_page(self):
-
-        if plugin_settings.get('enable_circuit_provider_documents') and plugin_settings.get('circuit_provider_documents_location') == 'right':
-
-            return self.render('netbox_documents/circuitproviderdocument_include.html', extra_context={
-                'circuit_provider_documents': CircuitProviderDocument.objects.filter(provider=self.context['object']),
-            })
-
-        else:
-            return ""
-
-
-template_extensions = [SiteDocumentList, LocationDocumentList, DeviceDocumentList, DeviceTypeDocumentList, ModuleTypeDocumentList, CircuitDocumentList, VMDocumentList, CircuitProviderDocumentList]
+    DynamicDocumentList.__name__ = f'DocumentList_{model_label.replace(".", "_")}'
+    DynamicDocumentList.__qualname__ = DynamicDocumentList.__name__
+    return DynamicDocumentList
+
+
+template_extensions = [
+    _make_extension(model_label)
+    for model_label in DOCUMENT_MODELS
+]
