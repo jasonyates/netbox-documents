@@ -10,7 +10,7 @@ with open(path.join(top_level_directory, 'requirements.txt')) as file:
 
 setup(
     name='netbox-documents',
-    version='0.8.1',
+    version='0.8.2',
     description='Attach documents and external URLs to any NetBox object',
     long_description=long_description,
     long_description_content_type='text/markdown',
