@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.2 (2026-02-13)
+
+* Fix stale ContentType entries from old per-model document tables causing ProtectedError during NetBox upgrades
+* Migrate changelog (ObjectChange) entries to reference the unified Document model during data migration
+
+## 0.8.1 (2026-02-13)
+
+* Documents can now be attached to any NetBox model, not just the original 8 hardcoded models
+* Add API root view name
+
 ## 0.7.4 (2025-07-11)
 
 * Fix permissions to allow plugin to be visible for non-superadmin users

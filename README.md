@@ -20,7 +20,7 @@ A plugin designed to facilitate the storage of documents against any object with
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
-|     4.3+       |      0.8.1     |
+|     4.3+       |      0.8.2     |
 |     4.3+       |      0.7.4     |
 |     4.2+       |      0.7.2     |
 |  4.0 - 4.1     |      0.7.0     |
@@ -29,13 +29,13 @@ A plugin designed to facilitate the storage of documents against any object with
 | 3.3.x - 3.4.x  |      0.5.1     |
 
 
-## Upgrading to 0.8.0
+## Upgrading to 0.8.2
 
-> **Breaking Changes:** Version 0.8.0 is a major refactoring. Please read carefully before upgrading.
+> **Breaking Changes:** Version 0.8.2 is a major refactoring. Please read carefully before upgrading.
 
 ### What changed
 
-The plugin previously used 8 separate database models (SiteDocument, DeviceDocument, CircuitDocument, etc.). Version 0.8.0 replaces these with a single unified `Document` model using Django's ContentType framework (GenericForeignKey). This enables documents to be attached to any NetBox model.
+The plugin previously used 8 separate database models (SiteDocument, DeviceDocument, CircuitDocument, etc.). Version 0.8.2 replaces these with a single unified `Document` model using Django's ContentType framework (GenericForeignKey). This enables documents to be attached to any NetBox model.
 
 ### Breaking changes
 
@@ -48,11 +48,8 @@ The plugin previously used 8 separate database models (SiteDocument, DeviceDocum
 ### Upgrade procedure
 
 1. **Back up your database** before upgrading.
-2. Install the new version: `pip install netbox-documents==0.8.0`
+2. Install the new version: `pip install netbox-documents==0.8.2`
 3. Run migrations: `python manage.py migrate`
-   - Migration 0009 creates the new unified `Document` table
-   - Migration 0010 copies all data from the 8 old tables into the new table, preserving timestamps, tags, and custom field data
-   - Migration 0011 drops the old tables
 4. Update any API integrations to use the new `/api/plugins/netbox-documents/documents/` endpoint
 5. Update any permission assignments to use the new `document` permission names
 6. Update your `PLUGINS_CONFIG` if you used `FIELD_CHOICES` for custom document types (see below)

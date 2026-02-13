@@ -14,10 +14,21 @@ OLD_MODELS = [
 ]
 
 
+def _get_object_change_model(apps):
+    """ObjectChange moved from extras to core across NetBox versions."""
+    for app_label in ('core', 'extras'):
+        try:
+            return apps.get_model(app_label, 'ObjectChange')
+        except LookupError:
+            continue
+    return None
+
+
 def migrate_forward(apps, schema_editor):
     Document = apps.get_model('netbox_documents', 'Document')
     ContentType = apps.get_model('contenttypes', 'ContentType')
     TaggedItem = apps.get_model('extras', 'TaggedItem')
+    ObjectChange = _get_object_change_model(apps)
 
     # Use get_or_create for the Document ContentType since Django creates
     # ContentType records via post_migrate, not between migrations.
@@ -54,6 +65,16 @@ def migrate_forward(apps, schema_editor):
                 content_type=doc_ct,
                 object_id=new_doc.pk,
             )
+
+            # Migrate changelog entries to reference the new Document record
+            if ObjectChange is not None:
+                ObjectChange.objects.filter(
+                    changed_object_type=old_ct,
+                    changed_object_id=old_doc.pk,
+                ).update(
+                    changed_object_type=doc_ct,
+                    changed_object_id=new_doc.pk,
+                )
 
 
 def migrate_backward(apps, schema_editor):
@@ -111,6 +132,7 @@ class Migration(migrations.Migration):
         ('netbox_documents', '0009_document'),
         ('contenttypes', '__latest__'),
         ('extras', '__latest__'),
+        ('core', '__latest__'),
     ]
 
     operations = [
