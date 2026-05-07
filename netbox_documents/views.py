@@ -15,6 +15,7 @@ class DocumentListView(generic.ObjectListView):
     filterset = filtersets.DocumentFilterSet
     filterset_form = forms.DocumentFilterForm
     actions = {
+        'add': {'add'},
         'export': {'view'},
         'bulk_delete': {'delete'},
     }
