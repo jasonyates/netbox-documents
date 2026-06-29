@@ -130,9 +130,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('netbox_documents', '0009_document'),
-        ('contenttypes', '__latest__'),
-        ('extras', '__latest__'),
-        ('core', '__latest__'),
     ]
 
     operations = [
