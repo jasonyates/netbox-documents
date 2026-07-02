@@ -1,16 +1,15 @@
 name: Publish to PyPI
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # Required for trusted publishing
-      contents: write  # Required for creating GitHub releases
+      contents: write  # Required for uploading artifacts to the release
 
     steps:
       - name: Checkout
@@ -24,9 +23,14 @@ jobs:
       - name: Install build tools
         run: pip install build
 
-      - name: Extract version
-        id: version
-        run: echo "version=$(sed -n "s/^    version = '\(.*\)'/\1/p" netbox_documents/__init__.py | head -1)" >> $GITHUB_OUTPUT
+      - name: Verify release tag matches package version
+        run: |
+          pkg_version=$(sed -n "s/^    version = '\(.*\)'/\1/p" netbox_documents/__init__.py | head -1)
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$pkg_version" != "$tag_version" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match package version $pkg_version" >&2
+            exit 1
+          fi
 
       - name: Build package
         run: python -m build
@@ -34,10 +38,7 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-      - name: Create GitHub Release
+      - name: Upload artifacts to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: v${{ steps.version.outputs.version }}
-          generate_release_notes: true
           files: dist/*
