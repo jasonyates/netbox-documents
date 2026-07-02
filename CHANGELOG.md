@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.3 (2026-05-07)
+* Restore the Add button in the sidebar and in the main Documents page.
+
 ## 0.8.2 (2026-02-13)
 
 * Fix stale ContentType entries from old per-model document tables causing ProtectedError during NetBox upgrades
