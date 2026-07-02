@@ -26,7 +26,7 @@ class DocumentForm(NetBoxModelForm):
         allowed_values = get_allowed_doc_types(content_type_id)
 
         if allowed_values is not None:
-            all_choices = list(DocTypeChoices.choices)
+            all_choices = list(DocTypeChoices())
             filtered = [c for c in all_choices if c[0] in allowed_values]
 
             # Preserve the current value when editing an existing document
