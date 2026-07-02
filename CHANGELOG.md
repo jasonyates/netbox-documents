@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.5 (2026-07-02)
+
+* Fix server error (IntegrityError) when adding a document from the sidebar or Documents list page - documents must be added from an object's detail page, so the standalone Add buttons introduced in 0.8.3 have been removed (Fixes #107)
+* Raise a validation error instead of a server error if a document is saved without an associated object
+
 ## 0.8.4 (2026-07-02)
 
 * Update the documents panel and document detail page to match the current NetBox card UI - the Add button now appears as a header action (Thanks @julianstolp) (Fixes #93)

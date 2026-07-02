@@ -1,5 +1,4 @@
-from netbox.plugins import PluginMenuItem, PluginMenu, PluginMenuButton
-from netbox.choices import ButtonColorChoices
+from netbox.plugins import PluginMenuItem, PluginMenu
 from django.conf import settings
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
@@ -11,15 +10,6 @@ if plugin_settings.get('enable_navigation_menu'):
             link='plugins:netbox_documents:document_list',
             link_text='Documents',
             permissions=["netbox_documents.view_document"],
-            buttons=[
-                PluginMenuButton(
-                    link='plugins:netbox_documents:document_add',
-                    title='Add',
-                    icon_class='mdi mdi-plus-thick',
-                    permissions=['netbox_documents.add_document'],
-                    color=ButtonColorChoices.GREEN,
-                ),
-            ],
         )
     ]
 
