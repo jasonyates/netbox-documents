@@ -100,9 +100,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('netbox_documents', '0011_remove_old_models'),
-        ('contenttypes', '__latest__'),
-        ('extras', '__latest__'),
-        ('core', '__latest__'),
     ]
 
     operations = [
