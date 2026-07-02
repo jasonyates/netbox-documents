@@ -165,6 +165,11 @@ class Document(NetBoxModel):
 
     def clean(self):
         super().clean()
+        if self.content_type_id is None or self.object_id is None:
+            raise ValidationError(
+                "A document must be associated with an object. Add documents from the detail page "
+                "of the object they relate to."
+            )
         if not self.document and self.external_url == '':
             raise ValidationError("A document must contain an uploaded file or an external URL.")
         if self.document and self.external_url:
