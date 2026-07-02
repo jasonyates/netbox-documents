@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.4 (2026-07-02)
 
 * Update the documents panel and document detail page to match the current NetBox card UI - the Add button now appears as a header action (Thanks @julianstolp) (Fixes #93)
 
