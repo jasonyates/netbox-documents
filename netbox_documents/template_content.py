@@ -2,7 +2,7 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from netbox.plugins import PluginTemplateExtension
 from django.conf import settings
-from .models import Document
+from .models import Document, get_allowed_doc_types
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_documents', {})
 
@@ -37,6 +37,10 @@ def _make_extension(model_label):
         def _render_panel(self):
             obj = self.context['object']
             ct = ContentType.objects.get_for_model(obj)
+
+            if not get_allowed_doc_types(ct.pk):
+                return ''
+
             return self.render('netbox_documents/document_include.html', extra_context={
                 'documents': self._get_documents(),
                 'content_type_id': ct.pk,
