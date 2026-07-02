@@ -49,32 +49,43 @@ If you are proposing a feature:
 Ready to contribute? Here's how to set up `netbox-documents` for local development.
 
 1. Fork the `netbox-documents` repo on GitHub.
-2. Clone your fork locally
+2. Clone your forked `netbox-documents` repository and the `netbox` repository:
 
     ```
     $ git clone git@github.com:your_name_here/netbox-documents.git
+    $ git clone https://github.com/netbox-community/netbox.git
     ```
 
-3. Install dependencies and start your virtualenv:
+3. Enter the NetBox repository and a virtualenv:
 
     ```
-    $ poetry install -E test -E doc -E dev
+    $ cd netbox
+    $ python3.13 -m venv venv
+    $ . venv/bin/activate
     ```
 
-4. Create a branch for local development:
+4. Install dependencies for NetBox, and add the forked netbox-documents plugin for testing:
 
     ```
-    $ git checkout -b name-of-your-bugfix-or-feature
+    $ pip install -e ../netbox-documents/
     ```
 
-    Now you can make your changes locally.
+5. Now you can make your changes in `netbox-documents` locally:
+
+    ```
+    $ cd ../netbox-documents
+    $ git checkout -b my-new-feature
+    ```
 
 5. When you're done making changes, check that your changes pass the
-   tests, including testing other Python versions, with tox:
+   tests:
 
     ```
-    $ poetry run tox
+    $ cd ../netbox
+    $ NETBOX_CONFIGURATION=netbox.configuration_testing python netbox/manage.py test netbox_documents
     ```
+
+    Note this requires a PostgreSQL and Redis/Valkey server on localhost.
 
 6. Commit your changes and push your branch to GitHub:
 
@@ -94,6 +105,6 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.md.
-3. The pull request should work for Python 3.6, 3.7, 3.8 and 3.9. Check
+3. The pull request should work for the Python version used by NetBox itself. Check
    https://github.com/jasonyates/netbox-documents/actions
    and make sure that the tests pass for all supported Python versions.
