@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
+from netbox.object_actions import BulkDelete, BulkExport
 from netbox.views import generic
 from . import forms, models, tables, filtersets
 
@@ -14,10 +15,7 @@ class DocumentListView(generic.ObjectListView):
     table = tables.DocumentTable
     filterset = filtersets.DocumentFilterSet
     filterset_form = forms.DocumentFilterForm
-    actions = {
-        'export': {'view'},
-        'bulk_delete': {'delete'},
-    }
+    actions = (BulkExport, BulkDelete)
 
 
 class DocumentEditView(generic.ObjectEditView):
