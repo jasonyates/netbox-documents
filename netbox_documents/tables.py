@@ -3,10 +3,11 @@ from netbox.tables import NetBoxTable, columns
 from .models import Document
 
 DOCUMENT_LINK = """
-{% if record.size %}
-    <a href="{% url 'plugins:netbox_documents:document' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{record.document.url}}" target="_blank">View Document</a>)
-{% else %}
-    <a href="{% url 'plugins:netbox_documents:document' pk=record.pk %}">{% firstof record.name record.filename %}</a> (<a href="{{ record.external_url }}" target="_blank">View External Document</a>)
+<a href="{% url 'plugins:netbox_documents:document' pk=record.pk %}">{% firstof record.name record.filename %}</a>
+{% if record.external_url %}
+    (<a href="{{ record.external_url }}" target="_blank" rel="noopener noreferrer">View External Document</a>)
+{% elif record.document %}
+    (<a href="{{ record.document.url }}" target="_blank">View Document</a>)
 {% endif %}
 """
 
