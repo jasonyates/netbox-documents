@@ -38,7 +38,9 @@ def _make_extension(model_label):
             obj = self.context['object']
             ct = ContentType.objects.get_for_model(obj)
 
-            if not get_allowed_doc_types(ct.pk):
+            # None means all types are allowed (default config); an explicit empty list hides the panel
+            allowed = get_allowed_doc_types(ct.pk)
+            if allowed is not None and not allowed:
                 return ''
 
             return self.render('netbox_documents/document_include.html', extra_context={

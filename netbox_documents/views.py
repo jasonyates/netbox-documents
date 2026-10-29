@@ -4,6 +4,16 @@ from django.shortcuts import get_object_or_404
 from netbox.views import generic
 from . import forms, models, tables, filtersets
 
+try:
+    # NetBox 4.4+ (legacy dict-form actions were removed in 4.7)
+    from netbox.object_actions import BulkDelete, BulkExport
+    DOCUMENT_LIST_ACTIONS = (BulkExport, BulkDelete)
+except ImportError:
+    DOCUMENT_LIST_ACTIONS = {
+        'export': {'view'},
+        'bulk_delete': {'delete'},
+    }
+
 
 class DocumentView(generic.ObjectView):
     queryset = models.Document.objects.select_related('content_type').all()
@@ -14,10 +24,7 @@ class DocumentListView(generic.ObjectListView):
     table = tables.DocumentTable
     filterset = filtersets.DocumentFilterSet
     filterset_form = forms.DocumentFilterForm
-    actions = {
-        'export': {'view'},
-        'bulk_delete': {'delete'},
-    }
+    actions = DOCUMENT_LIST_ACTIONS
 
 
 class DocumentEditView(generic.ObjectEditView):
