@@ -34,3 +34,7 @@ class DocumentTable(NetBoxTable):
             'created', 'last_updated', 'tags',
         )
         default_columns = ('name', 'document_type', 'content_type', 'assigned_object', 'tags')
+
+    def value_name(self, record):
+        # Export the display name only, without the link text from DOCUMENT_LINK
+        return str(record)

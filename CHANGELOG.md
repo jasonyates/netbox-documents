@@ -4,6 +4,7 @@
 
 * Fix the documents panel not rendering on object pages when `allowed_doc_types` is unset (the default config) - an explicitly empty type list still hides the panel (Fixes #109, #114)
 * Fix server error on the Documents list with NetBox 4.7 by using `ObjectAction` classes for list view actions, falling back to the legacy form on NetBox < 4.4 - based on PR #112 (Thanks @louispham22) (Fixes #115)
+* Fix the Documents list CSV export including link text (e.g. "(View External Document)") in the Name column
 
 ## 0.8.5 (2026-07-02)
 
