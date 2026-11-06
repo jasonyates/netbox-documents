@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.7 (2026-11-06)
+
+* Choose the Documents list link based on `external_url` rather than file size, avoiding a storage lookup per row and an empty link when a file is missing from storage - PR #117 (Thanks @natecohen)
+* Show file sizes in human-readable form and render comments as Markdown in the Documents list - PR #116 (Thanks @natecohen)
+
+## 0.8.6 (2026-11-06)
+
+* Fix server error on the Documents list with NetBox 4.7 by migrating list view actions to `ObjectAction` classes - also proposed in PR #112 (Thanks @louispham22) (Fixes #115)
+* Fix the documents panel being hidden on every object when `allowed_doc_types` is not configured - the panel is now only hidden when a model is explicitly configured with no allowed types (Fixes #109, #114, #118)
+* Fix server error when sorting the Documents list by Assigned Object, Size or Filename (Fixes #113)
+* Only list documents the user has permission to view in the object documents panel
+* Set supported NetBox versions to 4.6 - 4.7
+
 ## 0.8.5 (2026-07-02)
 
 * Fix server error (IntegrityError) when adding a document from the sidebar or Documents list page - documents must be added from an object's detail page, so the standalone Add buttons introduced in 0.8.3 have been removed (Fixes #107)
