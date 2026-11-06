@@ -20,7 +20,7 @@ A plugin designed to facilitate the storage of documents against any object with
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
-|     4.6+       |      0.8.5     |
+|   4.6 - 4.7    |      0.8.6     |
 |     4.5+       |      0.8.2     |
 |     4.3+       |      0.7.4     |
 |     4.2+       |      0.7.2     |
@@ -60,7 +60,7 @@ The plugin previously used 8 separate database models (SiteDocument, DeviceDocum
 
 ## Installation
 
-A working installation of NetBox 4.3+ is required.
+A working installation of NetBox 4.6 or 4.7 is required.
 
 #### Package Installation from PyPI
 

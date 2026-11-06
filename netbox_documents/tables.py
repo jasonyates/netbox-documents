@@ -16,10 +16,17 @@ class DocumentTable(NetBoxTable):
     document_type = columns.ChoiceFieldColumn()
     assigned_object = tables.Column(
         linkify=True,
+        orderable=False,
         verbose_name='Assigned Object',
     )
     content_type = columns.ContentTypeColumn(
         verbose_name='Object Type',
+    )
+    size = tables.Column(
+        orderable=False,
+    )
+    filename = tables.Column(
+        orderable=False,
     )
 
     tags = columns.TagColumn(
