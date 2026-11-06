@@ -1,4 +1,5 @@
 import django_tables2 as tables
+from django.template.defaultfilters import filesizeformat
 from netbox.tables import NetBoxTable, columns
 from .models import Document
 
@@ -13,7 +14,10 @@ DOCUMENT_LINK = """
 
 
 class DocumentTable(NetBoxTable):
-    name = tables.TemplateColumn(template_code=DOCUMENT_LINK)
+    name = tables.TemplateColumn(
+        template_code=DOCUMENT_LINK,
+        order_by=('name',),
+    )
     document_type = columns.ChoiceFieldColumn()
     assigned_object = tables.Column(
         linkify=True,
@@ -25,11 +29,13 @@ class DocumentTable(NetBoxTable):
     )
     size = tables.Column(
         orderable=False,
+        verbose_name='Size',
     )
     filename = tables.Column(
         orderable=False,
+        verbose_name='Filename',
     )
-
+    comments = columns.MarkdownColumn()
     tags = columns.TagColumn(
         url_name='plugins:netbox_documents:document_list'
     )
@@ -42,3 +48,6 @@ class DocumentTable(NetBoxTable):
             'created', 'last_updated', 'tags',
         )
         default_columns = ('name', 'document_type', 'content_type', 'assigned_object', 'tags')
+
+    def render_size(self, value):
+        return filesizeformat(value) if value else ''
