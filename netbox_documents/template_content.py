@@ -29,7 +29,8 @@ def _make_extension(model_label):
         def _get_documents(self):
             obj = self.context['object']
             ct = ContentType.objects.get_for_model(obj)
-            return Document.objects.filter(content_type=ct, object_id=obj.pk)
+            user = self.context['request'].user
+            return Document.objects.restrict(user, 'view').filter(content_type=ct, object_id=obj.pk)
 
         def _get_return_url(self):
             return self.context['object'].get_absolute_url()
@@ -38,7 +39,9 @@ def _make_extension(model_label):
             obj = self.context['object']
             ct = ContentType.objects.get_for_model(obj)
 
-            if not get_allowed_doc_types(ct.pk):
+            # None means all types are allowed; an empty list hides the panel
+            allowed = get_allowed_doc_types(ct.pk)
+            if allowed is not None and not allowed:
                 return ''
 
             return self.render('netbox_documents/document_include.html', extra_context={

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A NetBox plugin (`netbox-documents`) that attaches documents and external URLs to any NetBox object. It uses a single `Document` model with Django's ContentType framework (GenericForeignKey) to relate documents to any model. Requires NetBox 4.3+.
+A NetBox plugin (`netbox-documents`) that attaches documents and external URLs to any NetBox object. It uses a single `Document` model with Django's ContentType framework (GenericForeignKey) to relate documents to any model. Requires NetBox 4.6-4.7.
 
 ## Development Environment
 
