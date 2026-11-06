@@ -29,7 +29,8 @@ def _make_extension(model_label):
         def _get_documents(self):
             obj = self.context['object']
             ct = ContentType.objects.get_for_model(obj)
-            return Document.objects.filter(content_type=ct, object_id=obj.pk)
+            user = self.context['request'].user
+            return Document.objects.restrict(user, 'view').filter(content_type=ct, object_id=obj.pk)
 
         def _get_return_url(self):
             return self.context['object'].get_absolute_url()
